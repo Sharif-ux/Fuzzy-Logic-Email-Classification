@@ -1,4 +1,4 @@
-![](https://i.imgur.com/BEJpU4k.png)
+<p align="center"><img width="240" src="https://i.imgur.com/BEJpU4k.png"></p>
 
 # Fuzzy Logic Email Classification
 
