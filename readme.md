@@ -2,7 +2,13 @@
 
 # Fuzzy Logic Email Classification
 
+### 1. Plan
+
 As the name suggests, classifies emails using a Fuzzy Logic System.
+
+<p align="center"><img width="625" src="https://i.imgur.com/HYQRXDK.jpg"></p>
+
+### 2. Windows installation
 
 Some quick tools to get started on windows:
 
