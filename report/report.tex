@@ -25,7 +25,6 @@
 
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage{natbib}
 \usepackage{lipsum}
 
 %-------------------------------------------------------------------------------
@@ -54,7 +53,7 @@
 
 \author{
     Authors: Peter Heemskerk, Stefan Schenk, Jim Kamans \\
-    Studentnrs: \dots, \dots, 10302905 \\
+    Studentnrs: \dots, 11881798, 10302905 \\
         Course: Fundamentals of Fuzzy Logic}
 
 \maketitle
@@ -79,29 +78,75 @@
 
 \section{Literature reviews}
 
-\textit{Provide a coherent and synthesized summary of relevant work in the literature, present the supporting/related evidence for your project.} \\
+\textit{Provide a coherent and synthesized summary of relevant work in the
+literature, present the supporting/related evidence for your project.} \\
 
-Santhi, Wenish, Sengutuvan: A Content Based Classification of Spam Mails with Fuzzy Word Ranking
-% http://ijcsi.org/papers/IJCSI-10-3-2-48-58.pdf
+A Content Based Classification of Spam Mails with Fuzzy Word Ranking
+\cite{spam} introduces
 
-Rosana J. Ferolin: A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm
-% http://onlinepresent.org/proceedings/vol4_2012/47.pdf
+A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm \cite{phishing}\\
 
-Inspirational papers: A new fuzzy logic based ranking function for efficient Information Retrieval system
+A new fuzzy logic based ranking function for efficient Information Retrieval system \cite{ranking} explains how "conventional ranking functions
+fail to capture inherent features of documents and queries due to subjectivity
+involved in natural language text", and offers a fuzzy approach to rank words
+based on term-weighting schema's such as term frequency, inverse document
+frequency and normalization.
 
+% \cite[chapter, p.~215]
 
 \section{Approach}
 In this section \dots
 
-  \subsection{Data}
-  \lipsum[3]
+\subsection{Data}
+\lipsum[3]
 
 
-  \subsection{Design}
-  \lipsum[2]
+\subsection{Design}
+\lipsum[2]
 
 
-  \subsection{Implementation}
-  \lipsum[1]
+\subsection{Implementation}
+\lipsum[1]
+
+%-------------------------------------------------------------------------------
+% BIBLIOGRAPHY
+%
+% EX:
+% \cite{citation1}
+%
+% \bibitem{citation1}
+%     Leslie Lamport,
+%     \textit{\LaTeX: a document preparation system},
+%     Addison Wesley, Massachusetts,
+%     2nd edition,
+%     1994.
+%-------------------------------------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{spam}
+    G. Santhi, S. Maria Wenish, Dr. P. Sengutuvan,
+    \textit{
+        \href{https://github.com/Menziess/Fuzzy-Logic-Email-Classification/raw/master/report/res/a_content_based_classification_of_spam_mails_with_fuzzy_word_ranking.pdf}{A Content Based Classification of Spam Mails with Fuzzy Word Ranking},
+    }
+    Department of Information Science and Technology,
+    Issue 3,
+    2013.
+
+\bibitem{phishing}
+    Rosana J. Ferolin,
+    \textit{
+        \href{https://github.com/Menziess/Fuzzy-Logic-Email-Classification/raw/master/report/res/a_proactive_anti-phishing_tool_using_fuzzy_logic_and_ripper_data_mining_classification_algorithm.pdf}{A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm},
+    }
+    Department of Computer Engineering University of San Carlos.
+
+\bibitem{ranking}
+    Rosana J. Ferolin,
+    \textit{
+        \href{https://github.com/Menziess/Fuzzy-Logic-Email-Classification/raw/master/report/res/a_new_fuzzy_logic_based_ranking_function_for_efficient_information_retrieval_system.pdf}{A new fuzzy logic based ranking function for efficient Information Retrieval system},
+    }
+    Department of Electrical Engineering Dayalbagh Educational Institute,
+    2014.
+
+\end{thebibliography}
 
 \end{document}
