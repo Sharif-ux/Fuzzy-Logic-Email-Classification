@@ -1,4 +1,9 @@
 *.csv
+
+*.fdb_latexmk
+*.fls
+*.out
+*.toc
 *.aux
 *.log
 *.synctex.gz
