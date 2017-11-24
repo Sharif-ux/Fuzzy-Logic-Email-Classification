@@ -70,12 +70,46 @@
 %-------------------------------------------------------------------------------
 % BODY
 %-------------------------------------------------------------------------------
+\section{Abstract}
+
+Large organizations have problems with their customer service, since due to their complexity, they cannot answer messages from external parties in a quick manner. This project aims to demonstrate that Fuzzy Logic can be used to solve this problem, by determining the correct addressee within the organization in an automatic way.
+
+In this project is has been demonstrated that Fuzzy Logic can successfully be implemented. The team implemented software based on a Python implementation. 
+
 \section{Introduction}
-\lipsum
 
-\section{Objectives}
-\lipsum
+This work is done in autumn 2017 as part of the bachelor course Fundamentals of Fuzzy Logic by A. Bilgin (and  M. Hol and V. Dankers) within the study Artificial Intelligence at University of Amsterdam.  
 
+\subsection{Problem}
+Many large organizations suffer from their own complexity. If an external party seeks contact with a specific person in an organization, this works fine, but if a party seeks contact about a subject (without knowing whom to talk to), it usually takes more time before the party gets a good answer. \\
+
+Who has not have experience with this complexity or large organizations? Suppose you as a have a question on [example], we all have been facing either that we are sent from one person to another department (“kastje naar de muur”), or perhaps worse that we do not get answer at all, since the message is lost somewhere. Organization aim to get better on customer service, but tools who support this are building up. \\
+ 
+This project aims to solve this issue of customer service in a complex organization. We present software based on fuzzy logic which aims to bring a message of an external party to the correct internal department or person fur further action, purely based on the content of the message. \\
+
+Why fuzzy logic ? 
+\begin{itemize}
+    \item First, with fuzzy logic methods, we can better deal with the uncertainties from the real world.
+    \item Second, fuzzy logic deals well with incomplete or difficult to interpret data. \item Finally, fuzzy logic uses linguistic terms. With this we can include human knowledge into the system which is relatively easy to interpret. 
+\end{itemize}
+These fuzzy and linguistic features support dealing with unstructured messages. 
+
+\subsection{Objectives}
+
+Via several steps our software will bring a unstructured message (e-mail) to the correct department. For achieving this goal several steps are taken: 
+\begin{enumerate}
+    \item from an email a list with relevant words is produced, irrelevant words are filtered out
+    \item the words are matched and scored (word count) against a feature list
+    \item with fuzzy logic these features are matched with a department. 
+    \item so the end result is a department attached to an email
+\end{enumerate}
+
+This project aims to prove that Fuzzy Logic works for this problem. Due to time-contraints the project has limitations: 
+\begin{itemize}
+    \item Only written e-mails are used as input. At this moment e-mailing is the main way of communication to businesses (120billion/day)\ref{label-artikel}, and far more used that other ways like social media or message apps. This will change , so in later phase we envisage this to be expanded to messages in any other format, like messaging via Whatsapp or LinkedIn. 
+    \item The "word-to-feature translator" is implemented with limited scope, currently a number of only (xx?) English words. We did not extend to much on this, since we would like to focus on the Fuzzy Logic part of the software.
+    \item We used a theoretical organization for the proposed structure of department, with first testing in the real world, we should test and amend this structure 
+\end{itemize}
 \section{Literature reviews}
 
 \textit{Provide a coherent and synthesized summary of relevant work in the
