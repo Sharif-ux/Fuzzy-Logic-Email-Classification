@@ -118,9 +118,9 @@ literature, present the supporting/related evidence for your project.} \\
 
 \subsection{A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm}
 
-A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm \cite{phishing} \\ is a paper that explains how phishing emails are detected using content- and non-content based approaches in the form of a combination of the RIPPER Classification Algorithm and a Fuzzy Logic system. The RIPPER classifier is used to learn relations of the different phishing features, resulting into rules that are used by the Fuzzy Logic System. \\
+A Proactive Anti-Phishing Tool Using Fuzzy Logic and RIPPER Data Mining Classification Algorithm \cite{phishing} \\ is a paper that explains how phishing emails are detected using content- and non-content based approaches in the form of a combination of the RIPPER Classification Algorithm and a Fuzzy Logic system. The RIPPER Classifier is used to learn relations of the different phishing features, resulting into rules that are used by the Fuzzy Logic System. \\
 
-While designing our system, the concrete implementation of the content-based classification approach gives us a starting point for designing membership functions, linguistic variables and rules.
+While designing our system, the implementation of the content-based classification approach gives us a starting point for designing membership functions, linguistic variables and rules. However, the characteristics used to determine the crisp inputs aren't mentioned.
 
 \subsection{A Content Based Classification of Spam Mails with Fuzzy Word Ranking}
 
@@ -146,6 +146,60 @@ In this section \dots
 
 
 \subsection{Design}
+
+The solution consists of four main operations: Cleaning, Filterig, Ranking, and Classifying. These three terms are descriptive, but contain more additional steps that are somewhat corrolated to the meaning of the terms.
+
+All actions in each step are represented by the colored arrows.
+
+\begin{enumerate}
+    \item Cleaning
+
+    An email is read from the file system as plain text, containing mostly irrelevant information for classification. The text is tokenized, meaning that individual terms are stored as individual values. After that, capital characters are converted to lower case, punctuation and special characters are removed, resulting in an array of words.
+
+    After that, stopwords are removed. Some examples of stopwords are: "a", "and", "but", "how", "or", and "what". And finally the words are stemmed, reducing words to their base root form. For example: "waited" will become "wait".
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=.6\linewidth]{res/cleaning}
+        \caption{Cleaning one email resulting into an array of words}
+        \label{fig:sub1}
+    \end{figure}
+
+    \item Filtering
+
+    The remaining words may be meaningfull now, but most of them may not be relevant. So the next operation will perform an intersection between the words and a list of predefined relevant words. All the words that reside in both lists will remain, but unlike sets, the list contains duplicates.
+
+    As the last filtering step, the words are counted, and a corpus is created.
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=.6\linewidth]{res/filtering}
+        \caption{Taking the intersection of the words with a relevant list of words}
+        \label{fig:sub1}
+    \end{figure}
+
+    \item Ranking
+
+    Sets of words within the set of relevant words share the same characteristics. For example a set $T \subseteq R$ exists where $R$ is the set of technical words, and $R$ is the set of relevant words from before.
+
+    Feature list of technical words: $T = [t_1, t_2, \dots, t_n]$
+
+    For every word in the email that is present in $T$, a score is calculated that takes the count of that word into account in relation to the total number of relevant words in the email. This calculation is made for all feature lists, for every word in the email.
+
+    Finally the scores are aggregated, resulting in the inputs for the Fuzzy Logic System.
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=.6\linewidth]{res/ranking}
+        \caption{The scores for each words are added as features}
+        \label{fig:sub1}
+    \end{figure}
+
+    \item Classifying
+
+    When we expand on the example of the technical word list, we may have a couple of other lists that are subsets of the relevant word list:
+
+\end{enumerate}
 
 
 \subsection{Implementation}
