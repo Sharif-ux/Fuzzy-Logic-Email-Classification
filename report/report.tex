@@ -180,13 +180,10 @@ All actions in each step are represented by the colored arrows.
 
     \item Ranking
 
-    Sets of words within the set of relevant words share the same characteristics. For example a set $T \subseteq R$ exists where $R$ is the set of technical words, and $R$ is the set of relevant words from before.
+    Other predefined sets of words within the set of relevant words share the same characteristics. For example a set $T \subseteq R$ exists where $R$ is the set of technical words, and $R$ is the set of relevant words from before. Feature list of technical words: $T = [t_1, t_2, \dots, t_n]$.
+    Other feature lists contain other themed words: $U$, $V$, $W$.
 
-    Feature list of technical words: $T = [t_1, t_2, \dots, t_n]$
-
-    For every word in the email that is present in $T$, a score is calculated that takes the count of that word into account in relation to the total number of relevant words in the email. This calculation is made for all feature lists, for every word in the email.
-
-    Finally the scores are aggregated, resulting in the inputs for the Fuzzy Logic System.
+    For every word in the email that is present in $T$, a score is calculated that takes the count of that word into account in relation to the total number of relevant words in the email. This calculation is made for all feature lists ($T$, $U$, $V$, $W$), for every word in the email.
 
     \begin{figure}[ht!]
         \centering
@@ -197,7 +194,7 @@ All actions in each step are represented by the colored arrows.
 
     \item Classifying
 
-    When we expand on the example of the technical word list, we may have a couple of other lists that are subsets of the relevant word list:
+    Finally the scores are aggregated, resulting in the inputs for the Fuzzy Logic System.
 
 \end{enumerate}
 
