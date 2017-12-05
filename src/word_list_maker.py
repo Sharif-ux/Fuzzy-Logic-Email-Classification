@@ -6,7 +6,7 @@ from utils import *
 path = "res/features/*.csv"
 
 # Prompting user for safety
-go = input("You're about to overwrite the word_list.csv file in" + path
+go = input("You're about to overwrite the word_list.csv file in " + path
 			+ "\nType 'GO' if that's what you'd like to do: ")
 
 if (go != 'GO'):

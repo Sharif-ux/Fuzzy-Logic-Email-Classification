@@ -10,6 +10,7 @@ import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
+from collections import Counter
 
 def tokenize(body):
     tokens = word_tokenize(body)
@@ -30,7 +31,7 @@ def read_txt(filepath):
 
 def read_csv(filepath):
     with open(filepath, 'r') as c:
-        reader = csv.reader(c, delimiter=',')
+        reader = csv.reader(c, delimiter=',', skipinitialspace=True)
         for row in reader:
             return row
 
