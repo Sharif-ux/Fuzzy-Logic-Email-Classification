@@ -6,7 +6,7 @@
 
 In the terminal run:
 
-    python3 main.py
+    python3 src/main.py
 
 ### 2. Plan
 
