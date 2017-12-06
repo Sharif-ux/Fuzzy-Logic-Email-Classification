@@ -16,7 +16,7 @@ if (go != 'GO'):
 # Find all csv files in defined path to convert to word_list
 word_list = []
 for fname in glob.glob(path):
-	word_list = word_list + read_csv(fname)
+	word_list = word_list + read_csv(fname)[0]
 
 generate_csv_from_array("res/features/word_list/word_list", set(word_list))
 

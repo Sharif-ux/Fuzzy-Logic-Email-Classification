@@ -1,11 +1,14 @@
+
+# Contains utility functions and imports
+
 import csv
 import nltk
 import string
 import pandas as pd
 import numpy as np
 
-# nltk.download('punkt')
-# nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('stopwords')
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -29,11 +32,10 @@ def read_txt(filepath):
         body = file.read()
     return tokenize(body)
 
-def read_csv(filepath):
+def read_csv(filepath, delimiter=','):
     with open(filepath, 'r') as c:
-        reader = csv.reader(c, delimiter=',', skipinitialspace=True)
-        for row in reader:
-            return row
+        return [row for row in csv.reader(c, delimiter=delimiter,
+            skipinitialspace=True)]
 
 def generate_csv_from_array(filename, array):
     with open(filename + ".csv", 'w', newline='') as c:
