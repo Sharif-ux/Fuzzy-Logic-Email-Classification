@@ -124,14 +124,25 @@ class Rulebase:
     calculate the firing strengths of its rules."""
     def __init__(self, rules):
         self.rules = rules
+    # def calculate_firing_strengths(self, datapoint, inputs, outputindex):
+    #     result = Counter()
+    #     for i, rule in enumerate(self.rules):
+    #         fs = rule.calculate_firing_strength(datapoint, inputs)
+    #         consequent = rule.consequent[outputindex]
+    #         if fs > result[consequent]:
+    #             result[consequent] = fs
+    #         # print('RULE', i+1, result)
+    #     return result
     def calculate_firing_strengths(self, datapoint, inputs, outputindex):
         result = Counter()
         for i, rule in enumerate(self.rules):
-            fs = rule.calculate_firing_strength(datapoint, inputs)
             consequent = rule.consequent[outputindex]
-            if fs > result[consequent]:
-                result[consequent] = fs
-            # print('RULE', i+1, result)
+            # check of consequent bestaat !!
+            if consequent != "":
+                fs = rule.calculate_firing_strength(datapoint, inputs)
+                if fs > result[consequent]:
+                    result[consequent] = fs
+            # print('RULE', i+1, consequent, result[consequent])
         return result
 
 class Reasoner:

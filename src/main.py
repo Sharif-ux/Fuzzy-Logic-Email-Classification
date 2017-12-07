@@ -109,7 +109,7 @@ def prepare_classifier():
     rules = [
         Rule(1,
             ["", "", "", "", "certain", "", ""], "and",
-            ["belastingen", "execution"]),
+            ["belasting", "execution"]),
         Rule(2,
             ["certain", "", "certain", "", "", "", ""], "and",
             ["werkeninkomen", "execution"]),
