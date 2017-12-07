@@ -1,6 +1,7 @@
 
 # Contains Filedump reading and processing classes
 
+import os
 from _utils import *
 
 # Paths
@@ -54,14 +55,14 @@ class Rater:
     def __init__(self):
         self.path = "res/features/*.csv"
         self.word_list = read_csv(path_word_list)[0]
-        self.feature_lists = [read_csv(fname)[0] for fname in glob.glob(self.path)]
+        self.feature_lists = [(os.path.basename(fname).split('.')[0], read_csv(fname)[0]) for fname in glob.glob(self.path)]
     def corpus(self, email):
         words = [x for x in intersection(email, self.word_list)]
         return np.c_[np.unique(words, return_counts=True)]
     def rate_words(self, email):
         c = self.corpus(email)
         c_len = len(c)
-        for f in self.feature_lists:
+        for n, f in self.feature_lists:
             c = np.c_[c, np.zeros(c_len)]
             for row in c:
                 if (row[0] in f):
@@ -70,6 +71,6 @@ class Rater:
     def rate_email(self, email):
         c = self.rate_words(email)
         ratings = dict()
-        for i in range(len(self.feature_lists)):
-            ratings[i] = min((c[:,i + 2].astype(np.float).sum()), 1.0)
+        for i, feature in enumerate(self.feature_lists):
+            ratings[feature[0]] = min((c[:,i + 2].astype(np.float).sum()), 1.0)
         return ratings
