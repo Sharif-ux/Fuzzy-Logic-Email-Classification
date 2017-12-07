@@ -25,7 +25,8 @@ def main(path):
     classifier = prepare_classifier()
 
     # Classify first email using the email ratings
-    classifier.classify(list(next(ratings).values()))
+    for email in [next(ratings) for _ in range(10)]:
+        classifier.classify(list(email.values()))
 
 def prepare_ratings():
     """
