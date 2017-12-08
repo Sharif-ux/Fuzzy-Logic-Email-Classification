@@ -23,7 +23,8 @@ class Classifier:
                 i, 201, "centroid")
     def classify(self, feature_vector):
         for name, reasoner in self.reasoners.items():
-            print(name, ':', round(reasoner.inference(feature_vector)))
+            print(feature_vector)
+            print(name, ':', round(reasoner.inference(feature_vector)), '\n')
 
 class TriangularMF:
     """Triangular fuzzy logic membership function class."""
@@ -160,6 +161,9 @@ class Reasoner:
         firing_strengths = self.rulebase.calculate_firing_strengths(
             datapoint, self.inputs, self.outputindex)
 
+        # 1a. Checks that all consequent names (as stored in firingstrenghts) exist in variable definition
+        self.check_consequents(firing_strengths)
+
         # 2. Aggragate and discretize
         # looks like: [(0.0, 1), (1.2437810945273631, 1), (2.4875621890547261, 1), (3.7313432835820892, 1), ...]
         input_value_pairs = self.aggregate(firing_strengths)
@@ -214,3 +218,11 @@ class Reasoner:
             else:
                 crisp_value = teller/noemer
         return crisp_value
+    def check_consequents(self, firing_strengths):
+        agg_start = self.output[self.outputindex].range[0]
+        # arbitrary point in domain
+        mslijst = self.output[self.outputindex].calculate_memberships(agg_start)
+        for ms in firing_strengths:
+            if ms not in mslijst:
+                print('WARNING - consequent:', ms, 'does not match outputdefinition')
+        return
