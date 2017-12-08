@@ -66,11 +66,12 @@ class Rater:
             c = np.c_[c, np.zeros(c_len)]
             for row in c:
                 if (row[0] in f):
-                    row[-1:] = round(int(row[1]) / c_len, 4)
+                    row[-1:] = int(row[1]) / c_len
         return c
     def rate_email(self, email):
         c = self.rate_words(email)
         ratings = dict()
         for i, feature in enumerate(self.feature_lists):
-            ratings[feature[0]] = min((c[:,i + 2].astype(np.float).sum()), 1.0)
+            agg = min(c[:,i + 2].astype(np.float).sum(), 1.0)
+            ratings[feature[0]] = float(format(agg, '.2f'))
         return ratings
