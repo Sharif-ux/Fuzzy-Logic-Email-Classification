@@ -52,8 +52,8 @@ class Dumpreader:
         return (tokenize(row[1]) for row in self.rows[1:])
 
 class Rater:
-    def __init__(self):
-        self.path = "res/features/*.csv"
+    def __init__(self, path):
+        self.path = path
         self.word_list = read_csv(path_word_list)[0]
         self.feature_lists = [(os.path.basename(fname).split('.')[0], read_csv(fname)[0]) for fname in glob.glob(self.path)]
     def corpus(self, email):
