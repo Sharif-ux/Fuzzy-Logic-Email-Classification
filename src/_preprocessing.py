@@ -56,6 +56,7 @@ class Rater:
         self.path = path
         self.word_list = read_csv(path_word_list)[0]
         self.feature_lists = [(os.path.basename(fname).split('.')[0], read_csv(fname)[0]) for fname in glob.glob(self.path)]
+        self.feature_lists.sort(key=lambda tup: tup[0])
     def corpus(self, email):
         words = [x for x in intersection(email, self.word_list)]
         return np.c_[np.unique(words, return_counts=True)]

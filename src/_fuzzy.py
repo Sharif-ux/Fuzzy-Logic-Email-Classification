@@ -22,9 +22,9 @@ class Classifier:
                 self.outputs,
                 i, 201, "centroid")
     def classify(self, feature_vector):
+        print('\nemail:', feature_vector)
         for name, reasoner in self.reasoners.items():
-            print(feature_vector)
-            print(name, ':', round(reasoner.inference(feature_vector)), '\n')
+            print(name, round(reasoner.inference(feature_vector)))
 
 class TriangularMF:
     """Triangular fuzzy logic membership function class."""
@@ -107,17 +107,28 @@ class Rule:
         self.consequent = consequent
         self.firing_strength = 0
     def calculate_firing_strength(self, datapoint, inputs):
-        # choosen min operator for T-norm
-        i = 0
-        self.firing_strength = 9999999999999999999
-        for input_ms in self.antecedent:
-            if input_ms == "":
-                msvalue = 1 # bij missing input in rule, telt deze mee voor 1
-            else:
-                mslijst = inputs[i].calculate_memberships(datapoint[i])
-                msvalue = mslijst[input_ms]
-            self.firing_strength = min(self.firing_strength, msvalue)
-            i += 1
+        memberships = []
+
+        for a, x, i in zip(self.antecedent, datapoint, inputs):
+            if (a == ''):
+                memberships.append(0)
+                continue
+
+            m = i.get_mf_by_name(a).calculate_membership(x)
+            memberships.append(m)
+
+        # Filtering out zero values
+        memberships = [x for x in memberships if x]
+
+        if not memberships:
+            self.firing_strength = 0
+
+        elif self.operator == "and":
+            self.firing_strength = min(memberships)
+
+        elif self.operator == "or":
+            self.firing_strength = max(memberships)
+
         return self.firing_strength
 
 class Rulebase:
@@ -125,20 +136,10 @@ class Rulebase:
     calculate the firing strengths of its rules."""
     def __init__(self, rules):
         self.rules = rules
-    # def calculate_firing_strengths(self, datapoint, inputs, outputindex):
-    #     result = Counter()
-    #     for i, rule in enumerate(self.rules):
-    #         fs = rule.calculate_firing_strength(datapoint, inputs)
-    #         consequent = rule.consequent[outputindex]
-    #         if fs > result[consequent]:
-    #             result[consequent] = fs
-    #         # print('RULE', i+1, result)
-    #     return result
     def calculate_firing_strengths(self, datapoint, inputs, outputindex):
         result = Counter()
         for i, rule in enumerate(self.rules):
             consequent = rule.consequent[outputindex]
-            # check of consequent bestaat !!
             if consequent != "":
                 fs = rule.calculate_firing_strength(datapoint, inputs)
                 if fs > result[consequent]:
@@ -220,7 +221,6 @@ class Reasoner:
         return crisp_value
     def check_consequents(self, firing_strengths):
         agg_start = self.output[self.outputindex].range[0]
-        # arbitrary point in domain
         mslijst = self.output[self.outputindex].calculate_memberships(agg_start)
         for ms in firing_strengths:
             if ms not in mslijst:

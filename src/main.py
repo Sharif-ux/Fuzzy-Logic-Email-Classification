@@ -6,7 +6,7 @@ from _fuzzy import *
 from _preprocessing import *
 
 
-def main(path):
+def main(args):
     """
     Main method.
 
@@ -15,20 +15,20 @@ def main(path):
 
     Parameters
     ----------
-    path : string
-        Path given as input argument when running main.py
+    args : List
+        Input arguments could be used in the future.
 
     """
-    path = "res/features/*.csv"
+    features_path = "res/features/*.csv"
 
     # Clean, tokenize, and rate all emails
-    ratings = prepare_ratings(path)
+    feature_lists, ratings = prepare_ratings(features_path)
 
     # Create a fuzzy logic instance
-    classifier = prepare_classifier(path)
+    classifier = prepare_classifier(feature_lists)
 
     # Classify first email using the email ratings
-    for email in [next(ratings) for _ in range(30)]:
+    for email in [next(ratings) for _ in range(5)]:
         classifier.classify(list(email.values()))
 
 def prepare_ratings(path):
@@ -53,9 +53,9 @@ def prepare_ratings(path):
     rater = Rater(path)
 	# print(rater.rate_words(next(rows_iterator)))
 	# print(rater.rate_email(next(rows_iterator)))
-    return (rater.rate_email(email) for email in rows_iterator)
+    return rater.feature_lists, (rater.rate_email(email) for email in rows_iterator)
 
-def prepare_classifier(path):
+def prepare_classifier(feature_lists):
     """
     Classifier.
 
@@ -69,42 +69,49 @@ def prepare_classifier(path):
         using the email feature vector as inputs.
 
     """
-
     # Inputs all look the same, |\/\/|, ranging inclusively from 0 to 1 for
     # each feature list.
     inputs = [
-        [Input(os.path.basename(fname).split('.')[0], (0, 1), [
+
+        Input(feature[0], (0, 1), [
             TrapezoidalMF("low", 0, 0, 0, 0.5),
             TriangularMF("med", 0, 0.5, 1),
             TrapezoidalMF("high", 0.5, 1, 1, 1)
-        ]) for fname in glob.glob(path)]
+        ]) for feature in feature_lists
+
     ]
 
     # The outputs are the department and priority of the email.
     outputs = [
+
         Output("department", (0, 8), [
-            TrapezoidalMF("overig", 0, 0, 0, 0.125),
-            TriangularMF("basisinformatie", 0, 0.125, 0.25),
-            TriangularMF("openbare ruimte", 0.125, 0.25, 0.375),
-            TriangularMF("onderwijs, jeugd en zorg", 0.25, 0.375, 0.5),
-            TriangularMF("stadsloket", 0.375, 0.5, 0.625),
-            TriangularMF("parkeren", 0.5, 0.625, 0.85),
-            TriangularMF("werk en inkomen", 0.625, 0.75, 0.875),
-            TriangularMF("belastingen", 0.75, 0.875, 1),
-            TrapezoidalMF("overlast", 0.875, 1, 1, 1)
+            TrapezoidalMF("overig", 0, 0, 0, 1),
+            TriangularMF("basisinformatie", 0, 1, 2),
+            TriangularMF("openbare ruimte", 1, 2, 3),
+            TriangularMF("onderwijs, jeugd en zorg", 2, 3, 4),
+            TriangularMF("stadsloket", 3, 4, 5),
+            TriangularMF("parkeren", 4, 5, 6),
+            TriangularMF("werk en inkomen", 5, 6, 7),
+            TriangularMF("belastingen", 6, 7, 8),
+            TrapezoidalMF("overlast", 7, 8, 8, 8)
         ]),
-        Output("priority", (0, 1), [
-            TrapezoidalMF("execution", 0, 0, 0, 0.5),
-            TriangularMF("management", 0, 0.5, 1),
-            TrapezoidalMF("political", 0.5, 1, 1, 1)
+
+        Output("priority", (0, 2), [
+            TrapezoidalMF("execution", 0, 0, 0, 1),
+            TriangularMF("management", 0, 1, 2),
+            TrapezoidalMF("political", 1, 2, 2, 2)
         ])
+
     ]
 
-    # Rules
+    # Rules order: action agitation financial personal space tax traffic
     rules = [
 
-        Rule(1, ["", "", "", "", "", "", ""], "and", ["", ""]),
-        Rule(2, ["", "", "", "", "", "", ""], "and", ["", ""]),
+        # High action,
+        Rule(1, ["low", "med", "", "", "", "", "high"],
+            "and", ["parkeren", "political"]),
+        Rule(2, ["", "", "", "", "", "", "med"],
+            "and", ["overlast", "political"]),
 
     ]
 
@@ -117,4 +124,4 @@ def prepare_results():
     print("TODO!")
 
 # Calls main method and passes first argument
-if __name__ =='__main__': main(sys.argv[-1])
+if __name__ =='__main__': main(sys.argv)
