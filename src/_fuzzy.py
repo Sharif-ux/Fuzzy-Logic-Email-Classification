@@ -21,10 +21,15 @@ class Classifier:
                 self.inputs,
                 self.outputs,
                 i, 201, "centroid")
-    def classify(self, feature_vector):
-        print('\nemail:', feature_vector)
-        for name, reasoner in self.reasoners.items():
-            print(name, round(reasoner.inference(feature_vector)))
+    def classify(self, dept, email, feature_vector):
+        return {
+            "words" : email,
+            "ratings" : feature_vector,
+            "label" : dept,
+            "class" : {
+                name : round(reasoner.inference(feature_vector)) for name, reasoner in self.reasoners.items()
+            }
+        }
 
 class TriangularMF:
     """Triangular fuzzy logic membership function class."""
@@ -72,8 +77,6 @@ class Variable:
         self.range = range
         self.mfs = mfs
     def calculate_memberships(self, x):
-        """Test function to check whether
-        you put together the right mfs in your variables."""
         return {
             mf.name : mf.calculate_membership(x)
             for mf in self.mfs

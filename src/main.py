@@ -22,14 +22,25 @@ def main(args):
     features_path = "res/features/*.csv"
 
     # Clean, tokenize, and rate all emails
-    feature_lists, ratings = prepare_ratings(features_path)
+    feature_lists, email_ratings = prepare_ratings(features_path)
 
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
 
-    # Classify first email using the email ratings
-    for email in [next(ratings) for _ in range(5)]:
-        classifier.classify(list(email.values()))
+    classes = ["Overig", "Basisinformatie", "Openbare Ruimte", "Onderwijs",
+        "jeugd en zorg", "stadsloket", "parkeren", "werk en inkomen",
+        "belastingen", "overlast"]
+
+    # Classify first email using the email rating
+    print("%15s / %15s" % ("ORIGINAL LABEL", "CLASSIFICATION"))
+    for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
+        # print(classifier.classify(dept, email, list(rating.values())))
+        classification = classifier.classify(dept, email, list(rating.values()))
+        print(
+            "%15s / %15s" %
+            (classification['label'],
+            classes[classification['class']['department']])
+        )
 
 def prepare_ratings(path):
     """
@@ -48,12 +59,12 @@ def prepare_ratings(path):
     # dumpreader.count_categories()
     # dumpreader.count_categories_words()
     # dumpreader.describe()
-    rows_iterator = dumpreader.rows_iterator()
-	# print(next(rows_iterator))
+    rows = dumpreader.get_rows()
+	# print(next(rows))
     rater = Rater(path)
-	# print(rater.rate_words(next(rows_iterator)))
-	# print(rater.rate_email(next(rows_iterator)))
-    return rater.feature_lists, (rater.rate_email(email) for email in rows_iterator)
+	# print(rater.rate_words(next(rows)))
+	# print(rater.rate_email(next(rows)))
+    return rater.feature_lists, ((row[0], row[1], rater.rate_email(row[1])) for row in rows)
 
 def prepare_classifier(feature_lists):
     """
@@ -96,11 +107,11 @@ def prepare_classifier(feature_lists):
             TrapezoidalMF("overlast", 7, 8, 8, 8)
         ]),
 
-        Output("priority", (0, 2), [
-            TrapezoidalMF("execution", 0, 0, 0, 1),
-            TriangularMF("management", 0, 1, 2),
-            TrapezoidalMF("political", 1, 2, 2, 2)
-        ])
+        # Output("priority", (0, 2), [
+        #     TrapezoidalMF("execution", 0, 0, 0, 1),
+        #     TriangularMF("management", 0, 1, 2),
+        #     TrapezoidalMF("political", 1, 2, 2, 2)
+        # ])
 
     ]
 
@@ -108,11 +119,24 @@ def prepare_classifier(feature_lists):
     rules = [
 
         # High action,
-        Rule(1, ["low", "med", "", "", "", "", "high"],
-            "and", ["parkeren", "political"]),
-        Rule(2, ["", "", "", "", "", "", "med"],
-            "and", ["overlast", "political"]),
-
+        Rule(1, ["", "", "", "", "", "", ""],
+            "and", ["overig"]),
+        Rule(2, ["", "", "", "", "", "", ""],
+            "and", ["basisinformatie"]),
+        Rule(3, ["", "", "", "", "", "", ""],
+            "and", ["openbare ruimte"]),
+        Rule(4, ["", "", "", "", "", "", ""],
+            "and", ["onderwijs, jeugd en zorg"]),
+        Rule(5, ["", "", "", "", "", "", ""],
+            "and", ["stadsloket"]),
+        Rule(6, ["", "", "", "", "", "", ""],
+            "and", ["parkeren"]),
+        Rule(7, ["", "", "", "", "", "", ""],
+            "and", ["werk en inkomen"]),
+        Rule(8, ["high", "", "", "", "", "", ""],
+            "and", ["belastingen"]),
+        Rule(9, ["", "", "", "", "", "", ""],
+            "and", ["overlast"]),
     ]
 
     # Creating classifier

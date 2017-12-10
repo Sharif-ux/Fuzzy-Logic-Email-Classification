@@ -48,8 +48,9 @@ class Dumpreader:
                     for word in body:
                         self.categories_words[c][word] += 1
         return self.categories_words
-    def rows_iterator(self):
-        return (tokenize(row[1]) for row in self.rows[1:])
+    def get_rows(self):
+        print('rows')
+        return ((row[0], tokenize(row[1])) for row in self.rows[1:])
 
 class Rater:
     def __init__(self, path):
