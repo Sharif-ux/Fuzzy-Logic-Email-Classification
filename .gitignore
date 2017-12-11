@@ -6,3 +6,7 @@
 *.log
 *.fdb_latexmk
 *.synctex.gz
+
+# Working on creating more extensive feature lists
+/res/features/new
+/res/categories/new
