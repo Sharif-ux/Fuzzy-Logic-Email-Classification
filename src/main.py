@@ -116,28 +116,34 @@ def prepare_classifier(feature_lists):
     ]
 
     # Rules order: action agitation financial personal space tax traffic
+	# note: action en agitation zijn alleen voor output "priority" 
+ 
     rules = [
 
-        # High action,
-        Rule(1, ["", "", "", "", "", "", ""],
-            "and", ["overig"]),
-        Rule(2, ["", "", "", "", "", "", ""],
-            "and", ["basisinformatie"]),
-        Rule(3, ["", "", "", "", "", "", ""],
-            "and", ["openbare ruimte"]),
-        Rule(4, ["", "", "", "", "", "", ""],
-            "and", ["onderwijs, jeugd en zorg"]),
-        Rule(5, ["", "", "", "", "", "", ""],
-            "and", ["stadsloket"]),
-        Rule(6, ["", "", "", "", "", "", ""],
-            "and", ["parkeren"]),
-        Rule(7, ["", "", "", "", "", "", ""],
-            "and", ["werk en inkomen"]),
-        Rule(8, ["high", "", "", "", "", "", ""],
-            "and", ["belastingen"]),
-        Rule(9, ["", "", "", "", "", "", ""],
-            "and", ["overlast"]),
-    ]
+        # Rules for output: priority
+
+        Rule(a, ["high", "high", "", "", "", "", ""],
+            "and", ["political"]),
+
+        Rule(b, ["high", "med", "", "", "", "", ""],
+            "and", ["political"]),
+
+        Rule(c, ["high", "", "", "", "", "", ""],
+            "and", ["management"]),
+
+        Rule(d, ["med", "", "", "", "", "", ""],
+            "and", ["management"]),
+
+        Rule(e, ["", "med", "", "", "", "", ""],
+            "and", ["management"]),
+
+        Rule(f, ["", "low", "", "", "", "", ""],
+            "and", ["execution"]),
+
+        Rule(f, ["low", "", "", "", "", "", ""],
+            "and", ["execution"]),
+
+]
 
     # Creating classifier
     classifier = Classifier(inputs, outputs, rules)
