@@ -27,20 +27,16 @@ def main(args):
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
 
-    classes = ["Overig", "Basisinformatie", "Openbare Ruimte", "Onderwijs",
-        "jeugd en zorg", "stadsloket", "parkeren", "werk en inkomen",
-        "belastingen", "overlast"]
+    # List of possible outputs
+    classes = ["Overig", "Basisinformatie", "Openbare ruimte", "Onderwijs, jeugd en zorg", "Stadsloket", "Parkeren", "Werk en inkomen",
+        "Belastingen", "Overlast"]
+
+    result_printer = ResultPrinter(classes)
 
     # Classify first email using the email rating
-    print("%15s / %15s" % ("ORIGINAL LABEL", "CLASSIFICATION"))
     for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
-        # print(classifier.classify(dept, email, list(rating.values())))
         classification = classifier.classify(dept, email, list(rating.values()))
-        print(
-            "%15s / %15s" %
-            (classification['label'],
-            classes[classification['class']['department']])
-        )
+        result_printer.print(classification)
 
 def prepare_ratings(path):
     """
@@ -56,14 +52,8 @@ def prepare_ratings(path):
 
     """
     dumpreader = Dumpreader()
-    # dumpreader.count_categories()
-    # dumpreader.count_categories_words()
-    # dumpreader.describe()
     rows = dumpreader.get_rows()
-	# print(next(rows))
     rater = Rater(path)
-	# print(rater.rate_words(next(rows)))
-	# print(rater.rate_email(next(rows)))
     return rater.feature_lists, ((row[0], row[1], rater.rate_email(row[1])) for row in rows)
 
 def prepare_classifier(feature_lists):
@@ -110,32 +100,50 @@ def prepare_classifier(feature_lists):
         # Output("priority", (0, 2), [
         #     TrapezoidalMF("execution", 0, 0, 0, 1),
         #     TriangularMF("management", 0, 1, 2),
-        #     TrapezoidalMF("political", 1, 2, 2, 2)
+        #     TrapezoidalMF("execution", 1, 2, 2, 2),
         # ])
 
     ]
 
-    # Rules order: action agitation financial personal space tax traffic
+    # Rules are alphabetically ordered
     rules = [
 
         # High action,
         Rule(1, ["", "", "", "", "", "", ""],
             "and", ["overig"]),
+
         Rule(2, ["", "", "", "", "", "", ""],
             "and", ["basisinformatie"]),
-        Rule(3, ["", "", "", "", "", "", ""],
+
+        Rule(3, ["", "", "", "", "med", "", ""],
             "and", ["openbare ruimte"]),
-        Rule(4, ["", "", "", "", "", "", ""],
-            "and", ["onderwijs, jeugd en zorg"]),
+        Rule(4, ["", "", "", "", "high", "", ""],
+            "and", ["openbare ruimte"]),
+
         Rule(5, ["", "", "", "", "", "", ""],
-            "and", ["stadsloket"]),
+            "and", ["onderwijs, jeugd en zorg"]),
+
         Rule(6, ["", "", "", "", "", "", ""],
+            "and", ["stadsloket"]),
+
+        Rule(7, ["", "", "med", "", "", "", "high"],
             "and", ["parkeren"]),
-        Rule(7, ["", "", "", "", "", "", ""],
+        Rule(8, ["", "", "high", "", "", "", "high"],
+            "and", ["parkeren"]),
+
+        Rule(9, ["", "", "high", "high", "", "", ""],
             "and", ["werk en inkomen"]),
-        Rule(8, ["high", "", "", "", "", "", ""],
+        Rule(10, ["", "", "med", "high", "", "", ""],
+            "and", ["werk en inkomen"]),
+
+        Rule(11, ["", "", "high", "", "", "", ""],
             "and", ["belastingen"]),
-        Rule(9, ["", "", "", "", "", "", ""],
+        Rule(12, ["", "", "high", "", "", "", ""],
+            "and", ["belastingen"]),
+
+        Rule(13, ["", "", "", "high", "high", "", ""],
+            "and", ["overlast"]),
+        Rule(14, ["", "", "", "med", "med", "", ""],
             "and", ["overlast"]),
     ]
 
@@ -144,8 +152,22 @@ def prepare_classifier(feature_lists):
     classifier.reason()
     return classifier
 
-def prepare_results():
-    print("TODO!")
+class ResultPrinter:
+    """
+    Result Printer.
+
+    Prints a classification object.
+    """
+    def __init__(self, classes):
+        self.classes = classes
+        print("%15s / %15s / %1s" % ("LABEL", "CLASS", "FEATURES"))
+    def print(self, classification):
+        print(
+            "%15s / %15s / %20s" %
+            (classification['label'],
+            self.classes[classification['class']['department']],
+            classification['ratings'])
+        )
 
 # Calls main method and passes first argument
 if __name__ =='__main__': main(sys.argv)
