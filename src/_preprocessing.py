@@ -5,11 +5,11 @@ import os
 from _utils import *
 
 # Paths
-path_word_list = "res/features/word_list/word_list.csv"
+path_word_list = "../res/features/word_list/word_list.csv"
 
 class Dumpreader:
     """Reads an email dump from csv."""
-    def __init__(self, path='./res/klachtendumpgemeente.csv', delimiter=';'):
+    def __init__(self, path='../res/klachtendumpgemeente.csv', delimiter=';'):
         self.rows = read_csv(path, delimiter)
         self.categories = Counter()
         self.categories_words = Counter()
