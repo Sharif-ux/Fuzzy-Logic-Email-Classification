@@ -13,6 +13,9 @@ if (go != 'GO'):
 	print("You failed to type GO, aborting.")
 	sys.exit()
 
+if not os.path.exists("res/features/word_list"):
+    os.makedirs("res/features/word_list")
+
 # Find all csv files in defined path to convert to word_list
 word_list = []
 for fname in glob.glob(path):

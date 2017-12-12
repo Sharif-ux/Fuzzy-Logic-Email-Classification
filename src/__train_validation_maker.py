@@ -5,7 +5,9 @@ from _preprocessing import *
 train = 'res/traindump'
 valid = 'res/validationdump'
 
-dumpreader = Dumpreader()
+datadump_path = "res/klachtendumpgemeente.csv"
+
+dumpreader = Dumpreader(datadump_path)
 dumpreader.describe()
 
 with open(train + ".csv", 'w', newline='') as t:

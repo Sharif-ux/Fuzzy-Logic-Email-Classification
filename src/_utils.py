@@ -1,6 +1,7 @@
 
 # Contains utility functions and imports
 
+import os
 import sys
 import csv
 import glob
@@ -85,7 +86,7 @@ def read_csv(filepath, delimiter=','):
         Containing a list of words for each row.
 
     """
-    with open(filepath, 'r', encoding="utf8") as c:
+    with open(filepath, 'r') as c:
         return [row for row in csv.reader(c, delimiter=delimiter,
             skipinitialspace=True)]
 

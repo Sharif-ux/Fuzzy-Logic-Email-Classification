@@ -5,17 +5,19 @@ import os
 from _utils import *
 
 # Paths
-path_word_list = "../res/features/word_list/word_list.csv"
+path_word_list = "res/features/word_list/word_list.csv"
 
 class Dumpreader:
     """Reads an email dump from csv."""
-    def __init__(self, path='../res/klachtendumpgemeente.csv', delimiter=';'):
+    def __init__(self, path, delimiter=';'):
+        self.path = path
         self.rows = read_csv(path, delimiter)
         self.categories = Counter()
         self.categories_words = Counter()
     def describe(self):
-        print("Dumpinfo:\trows:",
-            len(self.rows), "\tcategories:", len(self.categories))
+        print("Dumpinfo:\tpath:", self.path,
+            "\trows:", len(self.rows),
+            "\tcategories:", len(self.categories))
         if (len(self.categories) > 0):
             for c in self.categories:
                 print(c, ':', self.categories[c])
@@ -43,7 +45,7 @@ class Dumpreader:
             self.categories_words[c] = Counter()
             print(c, ':', self.categories[c])
             for row in [row for row in self.rows[1:] if c == row[0]]:
-                for col in [1,2,3]:
+                for col in [1,2]:
                     body = tokenize(row[col])
                     for word in body:
                         self.categories_words[c][word] += 1

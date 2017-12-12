@@ -2,10 +2,16 @@
 from _utils import *
 from _preprocessing import *
 
-dumpreader = Dumpreader()
+# Using train set to create categories
+dump_path = "res/traindump.csv"
+
+dumpreader = Dumpreader(dump_path)
 dumpreader.count_categories()
 dumpreader.count_categories_words()
 dumpreader.describe()
+
+if not os.path.exists("res/categories"):
+    os.makedirs("res/categories")
 
 amount = 200
 for c in dumpreader.categories:

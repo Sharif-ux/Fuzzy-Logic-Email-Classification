@@ -19,10 +19,11 @@ def main(args):
         Input arguments could be used in the future.
 
     """
-    features_path = "../res/features/*.csv"
+    features_path = "res/features/*.csv"
+    datadump_path = "res/klachtendumpgemeente.csv"
 
     # Clean, tokenize, and rate all emails
-    feature_lists, email_ratings = prepare_ratings(features_path)
+    feature_lists, email_ratings = prepare_ratings(features_path, datadump_path)
 
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
@@ -38,11 +39,18 @@ def main(args):
         classification = classifier.classify(dept, email, list(rating.values()))
         result_printer.print(classification)
 
-def prepare_ratings(path):
+def prepare_ratings(features_path, datadump_path):
     """
     Preprocessor.
 
     Cleans, tokenizes, categorizes, and rates emails.
+
+    Parameters
+    -------
+    features_path
+        String containing the path to the folder containing feature csv's
+    datadump_path
+        String containing the path of the datadump csv
 
     Returns
     -------
@@ -51,9 +59,9 @@ def prepare_ratings(path):
 		it's calculated rating.
 
     """
-    dumpreader = Dumpreader()
+    dumpreader = Dumpreader(datadump_path)
     rows = dumpreader.get_rows()
-    rater = Rater(path)
+    rater = Rater(features_path)
     return rater.feature_lists, ((row[0], row[1], rater.rate_email(row[1])) for row in rows)
 
 def prepare_classifier(feature_lists):
@@ -111,66 +119,8 @@ def prepare_classifier(feature_lists):
     rules = [
 
         # Moet alle overige opties opvangen
-        Rule(1, ["", "", "", "", "", "", ""],
-            "and", ["overig"]),
-
-        # Geen features
-        Rule(2, ["", "", "", "", "", "", ""],
-            "and", ["basisinformatie"]),
-
-        # Geen features
-        Rule(3, ["", "", "", "", "", "", ""],
-            "and", ["openbare ruimte"]),
-        Rule(4, ["", "", "", "", "", "", ""],
-            "and", ["openbare ruimte"]),
-
-        # Helemaal geen features
-        Rule(5, ["", "", "", "", "", "", ""],
-            "and", ["onderwijs, jeugd en zorg"]),
-
-        # No possible features
-        Rule(6, ["", "", "", "", "", "", ""],
-            "and", ["stadsloket"]),
-
-        # 3e "financial" en laatset "traffic"
-        Rule(7, ["", "", "med", "", "", "", "high"],
-            "and", ["parkeren"]),
-        Rule(8, ["", "", "high", "", "", "", "high"],
-            "and", ["parkeren"]),
-
-        # 3e "financial" 4e "personal"
-        Rule(9, ["", "", "high", "high", "", "", ""],
-            "and", ["werk en inkomen"]),
-        Rule(10, ["", "", "med", "high", "", "", ""],
-            "and", ["werk en inkomen"]),
-
-        # 2e "agitation", 3e "financial" 6e "tax"
-        Rule(11, ["", "low", "high", "", "", "high", ""],
+        Rule(1, ["", "", "high", "", "", ""],
             "and", ["belastingen"]),
-        Rule(12, ["", "med", "high", "", "", "high", ""],
-            "and", ["belastingen"]),
-        Rule(13, ["", "high", "high", "", "", "high", ""],
-            "and", ["belastingen"]),
-        Rule(14, ["", "high", "high", "", "", "low", ""],
-            "and", ["belastingen"]),
-        Rule(15, ["", "high", "high", "", "", "med", ""],
-            "and", ["belastingen"]),
-        Rule(16, ["", "high", "low", "", "", "high", ""],
-            "and", ["belastingen"]),
-        Rule(17, ["", "high", "med", "", "", "high", ""],
-            "and", ["belastingen"]),
-
-        # 4e "personal" 5e "space"
-        Rule(18, ["", "", "", "med", "high", "", ""],
-            "and", ["overlast"]),
-        Rule(19, ["", "", "", "low", "high", "", ""],
-            "and", ["overlast"]),
-        Rule(20, ["", "", "", "high", "med", "", ""],
-            "and", ["overlast"]),
-        Rule(21, ["", "", "", "high", "low", "", ""],
-            "and", ["overlast"]),
-        Rule(22, ["", "", "", "high", "high", "", ""],
-            "and", ["overlast"]),
     ]
 
     # Creating classifier
