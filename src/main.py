@@ -76,7 +76,7 @@ def prepare_classifier(feature_lists):
 
         Input(feature[0], (0, 1), [
             TrapezoidalMF("low", 0, 0, 0, 0.5),
-            TriangularMF("med", 0, 0.5, 1),
+            TriangularMF("med", 0.2, 0.5, 0.8),
             TrapezoidalMF("high", 0.5, 1, 1, 1)
         ]) for feature in feature_lists
 
@@ -106,44 +106,70 @@ def prepare_classifier(feature_lists):
     ]
 
     # Rules are alphabetically ordered
+    # We have 7 inputs, with 3 membership functions
+    # So we have a gigantic amount of possibilities..
     rules = [
 
-        # High action,
+        # Moet alle overige opties opvangen
         Rule(1, ["", "", "", "", "", "", ""],
             "and", ["overig"]),
 
+        # Geen features
         Rule(2, ["", "", "", "", "", "", ""],
             "and", ["basisinformatie"]),
 
-        Rule(3, ["", "", "", "", "med", "", ""],
+        # Geen features
+        Rule(3, ["", "", "", "", "", "", ""],
             "and", ["openbare ruimte"]),
-        Rule(4, ["", "", "", "", "high", "", ""],
+        Rule(4, ["", "", "", "", "", "", ""],
             "and", ["openbare ruimte"]),
 
+        # Helemaal geen features
         Rule(5, ["", "", "", "", "", "", ""],
             "and", ["onderwijs, jeugd en zorg"]),
 
+        # No possible features
         Rule(6, ["", "", "", "", "", "", ""],
             "and", ["stadsloket"]),
 
+        # 3e "financial" en laatset "traffic"
         Rule(7, ["", "", "med", "", "", "", "high"],
             "and", ["parkeren"]),
         Rule(8, ["", "", "high", "", "", "", "high"],
             "and", ["parkeren"]),
 
+        # 3e "financial" 4e "personal"
         Rule(9, ["", "", "high", "high", "", "", ""],
             "and", ["werk en inkomen"]),
         Rule(10, ["", "", "med", "high", "", "", ""],
             "and", ["werk en inkomen"]),
 
-        Rule(11, ["", "", "high", "", "", "", ""],
+        # 2e "agitation", 3e "financial" 6e "tax"
+        Rule(11, ["", "low", "high", "", "", "high", ""],
             "and", ["belastingen"]),
-        Rule(12, ["", "", "high", "", "", "", ""],
+        Rule(12, ["", "med", "high", "", "", "high", ""],
+            "and", ["belastingen"]),
+        Rule(13, ["", "high", "high", "", "", "high", ""],
+            "and", ["belastingen"]),
+        Rule(14, ["", "high", "high", "", "", "low", ""],
+            "and", ["belastingen"]),
+        Rule(15, ["", "high", "high", "", "", "med", ""],
+            "and", ["belastingen"]),
+        Rule(16, ["", "high", "low", "", "", "high", ""],
+            "and", ["belastingen"]),
+        Rule(17, ["", "high", "med", "", "", "high", ""],
             "and", ["belastingen"]),
 
-        Rule(13, ["", "", "", "high", "high", "", ""],
+        # 4e "personal" 5e "space"
+        Rule(18, ["", "", "", "med", "high", "", ""],
             "and", ["overlast"]),
-        Rule(14, ["", "", "", "med", "med", "", ""],
+        Rule(19, ["", "", "", "low", "high", "", ""],
+            "and", ["overlast"]),
+        Rule(20, ["", "", "", "high", "med", "", ""],
+            "and", ["overlast"]),
+        Rule(21, ["", "", "", "high", "low", "", ""],
+            "and", ["overlast"]),
+        Rule(22, ["", "", "", "high", "high", "", ""],
             "and", ["overlast"]),
     ]
 
