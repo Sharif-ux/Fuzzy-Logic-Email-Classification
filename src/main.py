@@ -28,20 +28,22 @@ def main(args):
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
 
-    classes = ["Overig", "Basisinformatie", "Openbare Ruimte", "Onderwijs",
-        "jeugd en zorg", "stadsloket", "parkeren", "werk en inkomen",
-        "belastingen", "overlast"]
+    classes = [
+        "Basisinformatie",
+        "Openbare Ruimte",
+        "Jeugd en Zorg",
+        "Parkeren",
+        "Werk en Inkomen",
+        "Belastingen",
+        "Overlast",
+    ]
+
+    result_printer = ResultPrinter(classes)
 
     # Classify first email using the email rating
-    print("%15s / %15s" % ("ORIGINAL LABEL", "CLASSIFICATION"))
     for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
-        # print(classifier.classify(dept, email, list(rating.values())))
         classification = classifier.classify(dept, email, list(rating.values()))
-        print(
-            "%15s / %15s" %
-            (classification['label'],
-            classes[classification['class']['department']])
-        )
+        result_printer.print(classification)
 
 def prepare_ratings(features_path, datadump_path):
     """
@@ -97,16 +99,14 @@ def prepare_classifier(feature_lists):
     # The outputs are the department and priority of the email.
     outputs = [
 
-        Output("department", (0, 8), [
-            TrapezoidalMF("overig", 0, 0, 0, 1),
-            TriangularMF("basisinformatie", 0, 1, 2),
-            TriangularMF("openbare ruimte", 1, 2, 3),
-            TriangularMF("onderwijs, jeugd en zorg", 2, 3, 4),
-            TriangularMF("stadsloket", 3, 4, 5),
-            TriangularMF("parkeren", 4, 5, 6),
-            TriangularMF("werk en inkomen", 5, 6, 7),
-            TriangularMF("belastingen", 6, 7, 8),
-            TrapezoidalMF("overlast", 7, 8, 8, 8)
+        Output("department", (0, 6), [
+            TrapezoidalMF("basisinformatie", 0, 0, 0, 1),
+            TriangularMF("openbare ruimte", 0, 1, 2),
+            TriangularMF("jeugd en zorg", 1, 2, 3),
+            TriangularMF("parkeren", 2, 3, 4),
+            TriangularMF("werk en inkomen", 3, 4, 5),
+            TriangularMF("belastingen", 4, 5, 6),
+            TrapezoidalMF("overlast", 5, 6, 6, 6)
         ]),
 
         # Output("priority", (0, 2), [
@@ -131,8 +131,23 @@ def prepare_classifier(feature_lists):
     classifier.reason()
     return classifier
 
-def prepare_results():
-    print("TODO!")
+class ResultPrinter:
+    """
+    Result Printer.
+
+    Prints a classification object.
+    """
+    def __init__(self, classes):
+        self.classes = classes
+        print("%15s / %15s / %1s" % ("LABEL", "CLASS", "FEATURES"))
+    def print(self, classification):
+        print(
+            "%15s / %15s / %20s" %
+            (classification['label'],
+            self.classes[classification['class']['department']],
+            classification['ratings'])
+        )
+
 
 # Calls main method and passes first argument
 if __name__ =='__main__': main(sys.argv)
