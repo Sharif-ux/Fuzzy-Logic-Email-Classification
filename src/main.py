@@ -19,7 +19,7 @@ def main(args):
         Input arguments could be used in the future.
 
     """
-    features_path = "res/features/*.csv"
+    features_path = "../res/features/*.csv"
 
     # Clean, tokenize, and rate all emails
     feature_lists, email_ratings = prepare_ratings(features_path)
