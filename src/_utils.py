@@ -104,7 +104,7 @@ def generate_csv_from_array(filename, array):
         Array that needs to be written.
 
     """
-    with open(filename + ".csv", 'w', newline='') as c:
+    with open(filename, 'w', newline='') as c:
         writer = csv.writer(c, delimiter=',')
         writer.writerow(array)
 

@@ -19,4 +19,4 @@ for c in dumpreader.categories:
 	for i in dumpreader.categories_words[c].most_common()[:amount]:
 		top_words.append(i[0])
 
-	generate_csv_from_array("res/categories/" + c, top_words)
+	generate_csv_from_array("res/categories/" + c + ".csv", top_words)

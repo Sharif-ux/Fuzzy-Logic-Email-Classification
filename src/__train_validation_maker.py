@@ -15,7 +15,10 @@ with open(train + ".csv", 'w', newline='') as t:
 		twriter = csv.writer(t, delimiter=';')
 		vwriter = csv.writer(v, delimiter=';')
 		for i, row in enumerate(dumpreader.rows):
-			if i % 2 == 0:
+			if i == 0:
+				twriter.writerow(row)
+				vwriter.writerow(row)
+			elif i % 2 == 0:
 				twriter.writerow(row)
 			else:
 				vwriter.writerow(row)
