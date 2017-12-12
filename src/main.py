@@ -28,16 +28,20 @@ def main(args):
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
 
-    # List of possible outputs
-    classes = ["Overig", "Basisinformatie", "Openbare ruimte", "Onderwijs, jeugd en zorg", "Stadsloket", "Parkeren", "Werk en inkomen",
-        "Belastingen", "Overlast"]
-
-    result_printer = ResultPrinter(classes)
+    classes = ["Overig", "Basisinformatie", "Openbare Ruimte", "Onderwijs",
+        "jeugd en zorg", "stadsloket", "parkeren", "werk en inkomen",
+        "belastingen", "overlast"]
 
     # Classify first email using the email rating
+    print("%15s / %15s" % ("ORIGINAL LABEL", "CLASSIFICATION"))
     for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
+        # print(classifier.classify(dept, email, list(rating.values())))
         classification = classifier.classify(dept, email, list(rating.values()))
-        result_printer.print(classification)
+        print(
+            "%15s / %15s" %
+            (classification['label'],
+            classes[classification['class']['department']])
+        )
 
 def prepare_ratings(features_path, datadump_path):
     """
@@ -84,7 +88,7 @@ def prepare_classifier(feature_lists):
 
         Input(feature[0], (0, 1), [
             TrapezoidalMF("low", 0, 0, 0, 0.5),
-            TriangularMF("med", 0.2, 0.5, 0.8),
+            TriangularMF("med", 0, 0.5, 1),
             TrapezoidalMF("high", 0.5, 1, 1, 1)
         ]) for feature in feature_lists
 
@@ -108,17 +112,16 @@ def prepare_classifier(feature_lists):
         # Output("priority", (0, 2), [
         #     TrapezoidalMF("execution", 0, 0, 0, 1),
         #     TriangularMF("management", 0, 1, 2),
-        #     TrapezoidalMF("execution", 1, 2, 2, 2),
+        #     TrapezoidalMF("political", 1, 2, 2, 2)
         # ])
 
     ]
 
-    # Rules are alphabetically ordered
-    # We have 7 inputs, with 3 membership functions
-    # So we have a gigantic amount of possibilities..
+    # Rules order: action agitation financial personal space tax traffic
+	# note: action en agitation zijn alleen voor output "priority"
+
     rules = [
 
-        # Moet alle overige opties opvangen
         Rule(1, ["", "", "high", "", "", ""],
             "and", ["belastingen"]),
     ]
@@ -128,22 +131,8 @@ def prepare_classifier(feature_lists):
     classifier.reason()
     return classifier
 
-class ResultPrinter:
-    """
-    Result Printer.
-
-    Prints a classification object.
-    """
-    def __init__(self, classes):
-        self.classes = classes
-        print("%15s / %15s / %1s" % ("LABEL", "CLASS", "FEATURES"))
-    def print(self, classification):
-        print(
-            "%15s / %15s / %20s" %
-            (classification['label'],
-            self.classes[classification['class']['department']],
-            classification['ratings'])
-        )
+def prepare_results():
+    print("TODO!")
 
 # Calls main method and passes first argument
 if __name__ =='__main__': main(sys.argv)
