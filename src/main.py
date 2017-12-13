@@ -136,10 +136,11 @@ class ResultPrinter:
     """
     def __init__(self, classes):
         self.classes = classes
-        print("%15s / %15s / %1s" % ("LABEL", "CLASS", "FEATURES"))
+        self.format = "%27s / %27s / %1s"
+        print(self.format % ("LABEL", "CLASS", "FEATURES"))
     def print(self, classification):
         print(
-            "%15s / %15s / %20s" %
+            self.format %
             (classification['label'],
             self.classes[classification['class']['department']],
             classification['ratings'])

@@ -13,6 +13,7 @@ import numpy as np
 nltk.download('punkt')
 nltk.download('stopwords')
 
+from many_stop_words import get_stop_words
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
@@ -37,13 +38,16 @@ def tokenize(body):
     """
     tokens = word_tokenize(body)
     tokens = [w.lower() for w in tokens]
+    tokens = [w for w in tokens if w != 'br']
     table = str.maketrans('', '', string.punctuation)
     stripped = [w.translate(table) for w in tokens]
     words = [word for word in stripped if word.isalpha()]
-    stop_words = set(stopwords.words('dutch'))
+    stop_words = list(get_stop_words('nl'))
+    nltk_words = list(stopwords.words('dutch'))
+    stop_words.extend(nltk_words)
     words = [w for w in words if not w in stop_words]
-#     stemmer = SnowballStemmer("dutch")
-#     words = [stemmer.stem(word) for word in words]
+    stemmer = SnowballStemmer("dutch")
+    words = [stemmer.stem(word) for word in words]
     return words
 
 def read_txt(filepath):

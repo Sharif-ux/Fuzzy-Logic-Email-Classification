@@ -22,9 +22,10 @@ Both Ubuntu and Windows subsystem for Linux:
 - Run bash
 - Install git - ```sudo apt-get install git```
 - Install pip3 - ```sudo apt-get install python3-pip3```
-- Install nltk - ```sudo pip3 install nltk```
+- Install many_stop_words - ```sudo pip3 install many_stop_words```
 - Install pandas - ```sudo pip3 install pandas```
 - Install numpy - ```sudo pip3 install numpy```
+- Install nltk - ```sudo pip3 install nltk```
 
 ### 3. Run
 
