@@ -43,15 +43,12 @@ class Dumpreader:
             self.count_categories()
         for c in self.categories:
             self.categories_words[c] = Counter()
-            print(c, ':', self.categories[c])
             for row in [row for row in self.rows[1:] if c == row[0]]:
-                for col in [1,2]:
-                    body = tokenize(row[col])
-                    for word in body:
-                        self.categories_words[c][word] += 1
+                body = tokenize(row[1])
+                for word in body:
+                    self.categories_words[c][word] += 1
         return self.categories_words
     def get_rows(self):
-        print('rows')
         return ((row[0], tokenize(row[1])) for row in self.rows[1:])
 
 class Rater:

@@ -10,17 +10,21 @@ As the name suggests, classifies emails using a Fuzzy Logic System.
   <p align="center"><img width="625" src="https://i.imgur.com/HYQRXDK.jpg"></p>
 </a>
 
-### 2. Installation (Windows 10 / Ubuntu)
+### 2. Installation
 
-On Windows 10:
+This step only on Windows 10:
 
 - Install Windows subsystem for Linux
 - Install Ubuntu from the store
 
-On Ubuntu / Windows subsystem for Linux:
+Both Ubuntu and Windows subsystem for Linux:
 
 - Run bash
 - Install git - ```sudo apt-get install git```
+- Install pip3 - ```sudo apt-get install python3-pip3```
+- Install nltk - ```sudo pip3 install nltk```
+- Install pandas - ```sudo pip3 install pandas```
+- Install numpy - ```sudo pip3 install numpy```
 
 ### 3. Run
 
@@ -36,4 +40,12 @@ To run the main program:
 To run one of the sprints describing the steps taken:
 
     $ jupyter notebook
+
+Run additional scripts for data processing:
+
+    $ python3 src/__print_dump_lengths.py
+    $ python3 src/__train_validation_maker.py
+    $ python3 src/__categories_maker.py
+    $ python3 src/__word_list_maker.py
+    $ python3 src/__remove_duplicates_csv_features.py
 
