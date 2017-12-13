@@ -15,13 +15,15 @@ class Dumpreader:
         self.categories = Counter()
         self.categories_words = Counter()
     def describe(self):
-        print("Dumpinfo:\tpath:", self.path,
+        print("\nDumpinfo:\tpath:", self.path,
             "\trows:", len(self.rows),
             "\tcategories:", len(self.categories))
         if (len(self.categories) > 0):
+            print("\nNumber of rows:")
             for c in self.categories:
                 print(c, ':', self.categories[c])
         if (len(self.categories_words) > 0):
+            print("\nMost common words:")
             for c in self.categories:
                 print(c, ':', self.categories_words[c].most_common()[:25], '\n')
     def count_categories(self):

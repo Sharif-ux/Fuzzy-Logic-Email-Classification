@@ -99,31 +99,28 @@ def prepare_classifier(feature_lists):
     # The outputs are the department and priority of the email.
     outputs = [
 
-        Output("department", (0, 6), [
+        Output("department", (0, 3), [
             TrapezoidalMF("basisinformatie", 0, 0, 0, 1),
             TriangularMF("openbare ruimte", 0, 1, 2),
-            TriangularMF("jeugd en zorg", 1, 2, 3),
-            TriangularMF("parkeren", 2, 3, 4),
-            TriangularMF("werk en inkomen", 3, 4, 5),
-            TriangularMF("belastingen", 4, 5, 6),
-            TrapezoidalMF("overlast", 5, 6, 6, 6)
-        ]),
-
-        # Output("priority", (0, 2), [
-        #     TrapezoidalMF("execution", 0, 0, 0, 1),
-        #     TriangularMF("management", 0, 1, 2),
-        #     TrapezoidalMF("political", 1, 2, 2, 2)
-        # ])
+            TriangularMF("parkeren", 1, 2, 3),
+            TrapezoidalMF("belasting, werk en inkomen", 2, 3, 3, 3),
+        ])
 
     ]
 
     # Rules order: action agitation financial personal space tax traffic
 	# note: action en agitation zijn alleen voor output "priority"
-
     rules = [
 
-        Rule(1, ["", "", "high", "", "", ""],
-            "and", ["belastingen"]),
+        Rule(1, ["", "", "", "", "", ""],
+            "and", ["basisinformatie"]),
+        Rule(2, ["", "", "", "", "", ""],
+            "and", ["openbare ruimte"]),
+        Rule(3, ["", "", "", "", "", ""],
+            "and", ["parkeren"]),
+        Rule(4, ["", "high", "", "", "", ""],
+            "and", ["belasting, werk en inkomen"])
+
     ]
 
     # Creating classifier

@@ -9,11 +9,6 @@ dumps = [
 ]
 
 for dump in dumps:
-
 	dumpreader = Dumpreader(dump)
 	dumpreader.count_categories_words()
 	dumpreader.describe()
-
-	print()
-	rows = dumpreader.get_rows()
-	print(dump, "has", len(dumpreader.rows), "rows.")
