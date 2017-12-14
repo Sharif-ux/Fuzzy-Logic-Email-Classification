@@ -9,6 +9,4 @@ dumps = [
 ]
 
 for dump in dumps:
-	dumpreader = Dumpreader(dump)
-	dumpreader.count_categories_words()
-	dumpreader.describe()
+	Dumpreader(dump).count_categories_words().describe()

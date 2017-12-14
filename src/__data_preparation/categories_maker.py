@@ -7,7 +7,11 @@ from _utils import *
 
 params = {
 	'threshold' : 0.2,
-	'categories_path' : "res/categories/"
+	# 'word_list_path' : "res/features/word_list/",
+	# Currently creating union word_list in categories folder instead of features folder
+	'word_list_path' : "res/categories/word_list/",
+	'categories_path' : "res/categories/",
+	'features_path' : "res/features/",
 }
 
 def tf(word, row):
@@ -47,12 +51,18 @@ class Corpus:
 	def filter_categories(self):
 		if not os.path.exists(params['categories_path']):
 			os.makedirs(params['categories_path'])
+		if not os.path.exists(params['word_list_path']):
+			os.makedirs(params['word_list_path'])
+		word_list = []
 		for category in self.categories:
 			print("Category:", category, "threshold:", params['threshold'])
 			rows = [row for row in self.rows if category == row[0]]
 			favorite_words = self.tfidf(rows)
+			word_list += favorite_words
 			generate_csv_from_array(params['categories_path'] + category.lower() + ".csv", favorite_words)
-
+		generate_csv_from_array(
+			params['word_list_path'] + "word_list.csv",
+			set(word_list))
 	def tfidf(self, rows):
 		favorite_words = []
 		for i, row in enumerate(rows):
@@ -63,7 +73,3 @@ class Corpus:
 					print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 					favorite_words.append(word)
 		return favorite_words
-
-
-
-

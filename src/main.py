@@ -1,10 +1,8 @@
 
-
 # Importing our utilities
 from _utils import *
 from _fuzzy import *
 from _preprocessing import *
-
 
 def main(args):
     """
@@ -19,8 +17,10 @@ def main(args):
         Input arguments could be used in the future.
 
     """
-    features_path = "res/features/*.csv"
-    datadump_path = "res/klachtendumpgemeente.csv"
+    # features_path = "res/features/*.csv"
+    # Currently using categories folder instead of featuers folder
+    features_path = "res/categories/*.csv"
+    datadump_path = "res/validationdump.csv"
 
     # Clean, tokenize, and rate all emails
     feature_lists, email_ratings = prepare_ratings(features_path, datadump_path)
@@ -31,11 +31,8 @@ def main(args):
     classes = [
         "Basisinformatie",
         "Openbare Ruimte",
-        "Jeugd en Zorg",
         "Parkeren",
-        "Werk en Inkomen",
-        "Belastingen",
-        "Overlast",
+        "Belastingen, Werk en Inkomen",
     ]
 
     result_printer = ResultPrinter(classes)
@@ -112,13 +109,13 @@ def prepare_classifier(feature_lists):
 	# note: action en agitation zijn alleen voor output "priority"
     rules = [
 
-        Rule(1, ["", "", "", "", "", ""],
+        Rule(1, ["high", "low", "low", "low"],
             "and", ["basisinformatie"]),
-        Rule(2, ["", "", "", "", "", ""],
+        Rule(2, ["low", "low", "high", "low"],
             "and", ["openbare ruimte"]),
-        Rule(3, ["", "", "", "", "", ""],
+        Rule(3, ["low", "low", "low", "high"],
             "and", ["parkeren"]),
-        Rule(4, ["", "high", "", "", "", ""],
+        Rule(4, ["low", "high", "low", "low"],
             "and", ["belasting, werk en inkomen"])
 
     ]

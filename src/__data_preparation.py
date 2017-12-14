@@ -1,9 +1,9 @@
 
 from __data_preparation.train_validation_splitter import *
 from __data_preparation.categories_maker import *
-from textblob import TextBlob as tb
 
-
+# Requires three values: input dump path, validation dump path
+# and train dump paths, in that particular order
 dumps = [
 	"res/klachtendumpgemeente.csv",
 	"res/validationdump.csv",

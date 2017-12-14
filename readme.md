@@ -10,6 +10,9 @@ As the name suggests, classifies emails using a Fuzzy Logic System.
   <p align="center"><img width="625" src="https://i.imgur.com/HYQRXDK.jpg"></p>
 </a>
 
+1. Run ```python3 src/__data_preparation.py``` to plit the data dump to make sure that the extracted words do not resamble the overall data in a way that it overfits, extract meaningfull words using the training datadump after cleaning the documents, create a csv list for each category, and a combined 'word_list' to filter out irrelevant words from input emails.
+2. Run ```python3 src/main.py``` to run the main application, which classifies a part of the validation datadump.
+
 ### 2. Installation
 
 This step only on Windows 10:
@@ -44,9 +47,7 @@ To run one of the sprints describing the steps taken:
 
 Run additional scripts for data processing:
 
+    $ python3 src/__data_preparation.py
     $ python3 src/__print_dump_lengths.py
-    $ python3 src/__train_validation_maker.py
-    $ python3 src/__categories_maker.py
     $ python3 src/__word_list_maker.py
     $ python3 src/__remove_duplicates_csv_features.py
-
