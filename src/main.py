@@ -96,7 +96,7 @@ def prepare_classifier(feature_lists):
     # The outputs are the department and priority of the email.
     outputs = [
 
-        Output("department", (0, 3), [
+        Output("basisinformatie", (0, 1), [
             TrapezoidalMF("basisinformatie", 0, 0, 0, 1),
             TriangularMF("openbare ruimte", 0, 1, 2),
             TriangularMF("parkeren", 1, 2, 3),
@@ -111,11 +111,19 @@ def prepare_classifier(feature_lists):
 
         Rule(1, ["high", "low", "low", "low"],
             "and", ["basisinformatie"]),
-        Rule(2, ["low", "low", "high", "low"],
+        Rule(2, ["med", "low", "low", "low"],
+            "and", ["basisinformatie"]),
+        Rule(3, ["low", "low", "high", "low"],
             "and", ["openbare ruimte"]),
-        Rule(3, ["low", "low", "low", "high"],
+        Rule(4, ["low", "low", "med", "low"],
+            "and", ["openbare ruimte"]),
+        Rule(5, ["low", "low", "low", "high"],
             "and", ["parkeren"]),
-        Rule(4, ["low", "high", "low", "low"],
+        Rule(6, ["low", "low", "low", "med"],
+            "and", ["parkeren"]),
+        Rule(7, ["low", "high", "low", "low"],
+            "and", ["belasting, werk en inkomen"]),
+        Rule(8, ["low", "med", "low", "low"],
             "and", ["belasting, werk en inkomen"])
 
     ]

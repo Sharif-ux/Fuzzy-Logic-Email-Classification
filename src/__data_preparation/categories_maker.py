@@ -54,22 +54,25 @@ class Corpus:
 		if not os.path.exists(params['word_list_path']):
 			os.makedirs(params['word_list_path'])
 		word_list = []
+		common_word_list = []
 		for category in self.categories:
 			print("Category:", category, "threshold:", params['threshold'])
 			rows = [row for row in self.rows if category == row[0]]
-			favorite_words = self.tfidf(rows)
+			favorite_words = set(self.tfidf(rows))
+			print(category, len(favorite_words))
 			word_list += favorite_words
+			common_word_list = intersection(common_word_list, favorite_words)
 			generate_csv_from_array(params['categories_path'] + category.lower() + ".csv", favorite_words)
 		generate_csv_from_array(
 			params['word_list_path'] + "word_list.csv",
-			set(word_list))
+			set([x for x in word_list if x not in common_word_list]))
 	def tfidf(self, rows):
 		favorite_words = []
 		for i, row in enumerate(rows):
-			scores = {word: tfidf(word, row[1], [r[1] for r in rows]) for word in row[1]}
+			scores = {word: tfidf(word, row[1], [r[1] for r in self.rows]) for word in row[1]}
 			sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-			for word, score in sorted_words[:3]:
+			for word, score in sorted_words:
 				if (score > params['threshold']):
-					print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
+					# print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 					favorite_words.append(word)
 		return favorite_words
