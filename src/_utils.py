@@ -38,7 +38,7 @@ def tokenize(body):
     """
     tokens = word_tokenize(body)
     tokens = [w.lower() for w in tokens]
-    tokens = [w for w in tokens if w != 'br']
+    tokens = [w for w in tokens if len(w) > 2]
     table = str.maketrans('', '', string.punctuation)
     stripped = [w.translate(table) for w in tokens]
     words = [word for word in stripped if word.isalpha()]

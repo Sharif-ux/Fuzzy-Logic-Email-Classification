@@ -11,13 +11,8 @@ dumps = [
 ]
 
 # Splitting datadump into two 50% / 50% to prevent overfitting
-# splitter = Splitter(';', *dumps).split()
+Splitter(';', *dumps).split()
 
 # Create lists of cleaned and filtered words for each category
 # and a combined list for all distinct words of all categories
-corpus = Corpus(';', dumps[-1])
-corpus.process()
-
-# print(corpus.categories)
-# print(corpus.rows[1])
-
+Corpus(';', dumps[-1]).process()
