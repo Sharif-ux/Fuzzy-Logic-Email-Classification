@@ -73,6 +73,6 @@ class Corpus:
 			sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 			for word, score in sorted_words:
 				if (score > params['threshold']):
-					# print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
+					print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 					favorite_words.append(word)
 		return favorite_words

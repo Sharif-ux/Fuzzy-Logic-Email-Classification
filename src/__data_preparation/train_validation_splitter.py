@@ -10,8 +10,8 @@ class Splitter:
 		self.train = trainpath
 	def split(self):
 		dump_rows = read_csv(self.datad, self.delim)
-		with open(self.train + ".csv", 'w', newline='') as t:
-			with open(self.valid + ".csv", 'w', newline='') as v:
+		with open(self.train, 'w', newline='') as t:
+			with open(self.valid, 'w', newline='') as v:
 				twriter = csv.writer(t, delimiter=self.delim)
 				vwriter = csv.writer(v, delimiter=self.delim)
 				tlen, vlen = 1, 1
