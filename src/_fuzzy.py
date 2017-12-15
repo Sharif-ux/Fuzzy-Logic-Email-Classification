@@ -27,7 +27,7 @@ class Classifier:
             "ratings" : feature_vector,
             "label" : dept,
             "class" : {
-                name : round(reasoner.inference(feature_vector)) for name, reasoner in self.reasoners.items()
+                name : round(reasoner.inference(feature_vector), 3) for name, reasoner in self.reasoners.items()
             }
         }
 
@@ -147,8 +147,7 @@ class Rulebase:
                 fs = rule.calculate_firing_strength(datapoint, inputs)
                 if fs > result[consequent]:
                     result[consequent] = fs
-            # print('RULE', i+1, consequent, result[consequent])
-            print(datapoint, rule.antecedent, result[consequent])
+            # print(datapoint, rule.antecedent, result[consequent])
         return result
 
 class Reasoner:

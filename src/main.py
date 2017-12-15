@@ -29,7 +29,7 @@ def main(args):
     classifier = prepare_classifier(feature_lists)
 
     # Print results
-    result_printer = ResultPrinter()
+    result_printer = ResultPrinter(feature_lists)
 
     # Classify first email using the email rating
     for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
@@ -76,8 +76,7 @@ def prepare_classifier(feature_lists):
 
     """
     # Inputs all look the same, |\/\/|, ranging inclusively from 0 to 1 for
-    # each feature list.
-    print([x[0] for x in feature_lists])
+    # each feature list
     inputs = [
 
         Input(feature[0], (0, 1), [
@@ -88,7 +87,7 @@ def prepare_classifier(feature_lists):
 
     ]
 
-    # The outputs are the department and priority of the email.
+    # The outputs are the departments in the feature list
     outputs = [
 
         Output(feature[0], (0, 1), [
@@ -99,26 +98,37 @@ def prepare_classifier(feature_lists):
 
     ]
 
-    # Rules order: action agitation financial personal space tax traffic
-	# note: action en agitation zijn alleen voor output "priority"
+    # Rules
     rules = [
 
         Rule(1, ["high", "", "", ""],
             "and", ["high", "", "", ""]),
-        # Rule(2, ["med", "", "", ""],
-            # "and", ["med", "", "", ""]),
-        Rule(3, ["", "", "high", ""],
+        Rule(2, ["med", "", "", ""],
+            "and", ["med", "", "", ""]),
+        Rule(3, ["low", "", "", ""],
+            "and", ["low", "", "", ""]),
+        Rule(4, ["", "", "high", ""],
             "and", ["", "", "high", ""]),
-        # Rule(4, ["", "", "med", ""],
-            # "and", ["", "", "med", ""]),
-        Rule(5, ["", "", "", "high"],
+        Rule(5, ["", "", "med", ""],
+            "and", ["", "", "med", ""]),
+        Rule(6, ["", "", "low", ""],
+            "and", ["", "", "low", ""]),
+        Rule(7, ["", "", "", "high"],
             "and", ["", "", "", "high"]),
-        # Rule(6, ["", "", "", "med"],
-            # "and", ["", "", "", "med"]),
-        Rule(7, ["", "high", "", ""],
+        Rule(8, ["", "", "", "med"],
+            "and", ["", "", "", "med"]),
+        Rule(9, ["", "", "", "low"],
+            "and", ["", "", "", "low"]),
+        Rule(10, ["", "high", "", ""],
             "and", ["", "high", "", ""]),
-        # Rule(8, ["", "med", "", ""],
-            # "and", ["", "med", "", ""])
+        Rule(11, ["", "med", "", ""],
+            "and", ["", "med", "", ""]),
+        Rule(12, ["", "low", "", ""],
+            "and", ["", "low", "", ""]),
+
+        # Catches empties
+        Rule(13, ["low", "low", "low", "low"],
+            "and", ["low", "", "", ""]),
 
     ]
 
@@ -133,18 +143,19 @@ class ResultPrinter:
 
     Prints a classification object.
     """
-    def __init__(self):
-        self.format = "%27s / %27s / %1s"
-        print(self.format % ("LABEL", "CLASS", "FEATURES"))
+    def __init__(self, feature_lists):
+        self.format = "%27s | %27s | %1s"
+        # Print columns
+        print(self.format % ("LABEL", "CLASS", [f[0] for f in feature_lists]))
     def print(self, classification):
         print(
             self.format %
             (classification['label'].lower(),
             max(classification['class'],
                 key=lambda k: classification['class'][k]),
+            # classification['class'],
             classification['ratings'])
         )
-
 
 # Calls main method and passes first argument
 if __name__ =='__main__': main(sys.argv)
