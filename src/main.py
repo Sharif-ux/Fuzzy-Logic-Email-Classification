@@ -86,9 +86,9 @@ def prepare_classifier(feature_lists):
     inputs = [
 
         Input(feature[0], (0, 1), [
-            TrapezoidalMF("low", 0, 0, 0, 0.5),
+            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
             TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1, 1)
+            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
         ]) for feature in feature_lists
 
     ]
@@ -97,10 +97,24 @@ def prepare_classifier(feature_lists):
     outputs = [
 
         Output("basisinformatie", (0, 1), [
-            TrapezoidalMF("basisinformatie", 0, 0, 0, 1),
-            TriangularMF("openbare ruimte", 0, 1, 2),
-            TriangularMF("parkeren", 1, 2, 3),
-            TrapezoidalMF("belasting, werk en inkomen", 2, 3, 3, 3),
+            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+            TriangularMF("med", 0, 0.5, 1),
+            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
+        ]),
+        Output("belastingen, werk en inkomen", (0, 1), [
+            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+            TriangularMF("med", 0, 0.5, 1),
+            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
+        ]),
+        Output("openbare ruimte", (0, 1), [
+            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+            TriangularMF("med", 0, 0.5, 1),
+            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
+        ]),
+        Output("parkeren", (0, 1), [
+            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+            TriangularMF("med", 0, 0.5, 1),
+            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
         ])
 
     ]
@@ -110,21 +124,21 @@ def prepare_classifier(feature_lists):
     rules = [
 
         Rule(1, ["high", "low", "low", "low"],
-            "and", ["basisinformatie"]),
+            "and", ["high", "low", "low", "low"]),
         Rule(2, ["med", "low", "low", "low"],
-            "and", ["basisinformatie"]),
+            "and", ["med", "low", "low", "low"]),
         Rule(3, ["low", "low", "high", "low"],
-            "and", ["openbare ruimte"]),
+            "and", ["low", "low", "high", "low"]),
         Rule(4, ["low", "low", "med", "low"],
-            "and", ["openbare ruimte"]),
+            "and", ["low", "low", "med", "low"]),
         Rule(5, ["low", "low", "low", "high"],
-            "and", ["parkeren"]),
+            "and", ["low", "low", "low", "high"]),
         Rule(6, ["low", "low", "low", "med"],
-            "and", ["parkeren"]),
+            "and", ["low", "low", "low", "med"]),
         Rule(7, ["low", "high", "low", "low"],
-            "and", ["belasting, werk en inkomen"]),
+            "and", ["low", "high", "low", "low"]),
         Rule(8, ["low", "med", "low", "low"],
-            "and", ["belasting, werk en inkomen"])
+            "and", ["low", "med", "low", "low"])
 
     ]
 
@@ -144,12 +158,13 @@ class ResultPrinter:
         self.format = "%27s / %27s / %1s"
         print(self.format % ("LABEL", "CLASS", "FEATURES"))
     def print(self, classification):
-        print(
-            self.format %
-            (classification['label'],
-            self.classes[classification['class']['department']],
-            classification['ratings'])
-        )
+        print(classification['label'], classification['class'], classification['ratings'])
+        # print(
+        #     self.format %
+        #     (classification['label'],
+        #     self.classes[classification['class']['department']],
+        #     classification['ratings'])
+        # )
 
 
 # Calls main method and passes first argument

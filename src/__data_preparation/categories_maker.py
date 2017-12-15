@@ -6,7 +6,7 @@ from collections import Counter
 from _utils import *
 
 params = {
-	'threshold' : 0.2,
+	'threshold' : 0.5,
 	# 'word_list_path' : "res/features/word_list/",
 	# Currently creating union word_list in categories folder instead of features folder
 	'word_list_path' : "res/categories/word_list/",
