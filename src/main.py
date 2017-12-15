@@ -28,14 +28,8 @@ def main(args):
     # Create a fuzzy logic instance
     classifier = prepare_classifier(feature_lists)
 
-    classes = [
-        "Basisinformatie",
-        "Openbare Ruimte",
-        "Parkeren",
-        "Belastingen, Werk en Inkomen",
-    ]
-
-    result_printer = ResultPrinter(classes)
+    # Print results
+    result_printer = ResultPrinter()
 
     # Classify first email using the email rating
     for (dept, email, rating) in [next(email_ratings) for _ in range(10)]:
@@ -83,12 +77,13 @@ def prepare_classifier(feature_lists):
     """
     # Inputs all look the same, |\/\/|, ranging inclusively from 0 to 1 for
     # each feature list.
+    print([x[0] for x in feature_lists])
     inputs = [
 
         Input(feature[0], (0, 1), [
-            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+            TrapezoidalMF("low", 0, 0, 0, 0.5),
             TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
+            TrapezoidalMF("high", 0.5, 1, 1, 1)
         ]) for feature in feature_lists
 
     ]
@@ -96,26 +91,11 @@ def prepare_classifier(feature_lists):
     # The outputs are the department and priority of the email.
     outputs = [
 
-        Output("basisinformatie", (0, 1), [
-            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
+        Output(feature[0], (0, 1), [
+            TrapezoidalMF("low", 0, 0, 0, 0.5),
             TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-        ]),
-        Output("belastingen, werk en inkomen", (0, 1), [
-            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
-            TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-        ]),
-        Output("openbare ruimte", (0, 1), [
-            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
-            TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-        ]),
-        Output("parkeren", (0, 1), [
-            TrapezoidalMF("low", -0.2, -0.1, 0, 0.5),
-            TriangularMF("med", 0, 0.5, 1),
-            TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-        ])
+            TrapezoidalMF("high", 0.5, 1, 1, 1)
+        ]) for feature in feature_lists
 
     ]
 
@@ -123,22 +103,22 @@ def prepare_classifier(feature_lists):
 	# note: action en agitation zijn alleen voor output "priority"
     rules = [
 
-        Rule(1, ["high", "low", "low", "low"],
-            "and", ["high", "low", "low", "low"]),
-        Rule(2, ["med", "low", "low", "low"],
-            "and", ["med", "low", "low", "low"]),
-        Rule(3, ["low", "low", "high", "low"],
-            "and", ["low", "low", "high", "low"]),
-        Rule(4, ["low", "low", "med", "low"],
-            "and", ["low", "low", "med", "low"]),
-        Rule(5, ["low", "low", "low", "high"],
-            "and", ["low", "low", "low", "high"]),
-        Rule(6, ["low", "low", "low", "med"],
-            "and", ["low", "low", "low", "med"]),
-        Rule(7, ["low", "high", "low", "low"],
-            "and", ["low", "high", "low", "low"]),
-        Rule(8, ["low", "med", "low", "low"],
-            "and", ["low", "med", "low", "low"])
+        Rule(1, ["high", "", "", ""],
+            "and", ["high", "", "", ""]),
+        # Rule(2, ["med", "", "", ""],
+            # "and", ["med", "", "", ""]),
+        Rule(3, ["", "", "high", ""],
+            "and", ["", "", "high", ""]),
+        # Rule(4, ["", "", "med", ""],
+            # "and", ["", "", "med", ""]),
+        Rule(5, ["", "", "", "high"],
+            "and", ["", "", "", "high"]),
+        # Rule(6, ["", "", "", "med"],
+            # "and", ["", "", "", "med"]),
+        Rule(7, ["", "high", "", ""],
+            "and", ["", "high", "", ""]),
+        # Rule(8, ["", "med", "", ""],
+            # "and", ["", "med", "", ""])
 
     ]
 
@@ -153,18 +133,17 @@ class ResultPrinter:
 
     Prints a classification object.
     """
-    def __init__(self, classes):
-        self.classes = classes
+    def __init__(self):
         self.format = "%27s / %27s / %1s"
         print(self.format % ("LABEL", "CLASS", "FEATURES"))
     def print(self, classification):
-        print(classification['label'], classification['class'], classification['ratings'])
-        # print(
-        #     self.format %
-        #     (classification['label'],
-        #     self.classes[classification['class']['department']],
-        #     classification['ratings'])
-        # )
+        print(
+            self.format %
+            (classification['label'].lower(),
+            max(classification['class'],
+                key=lambda k: classification['class'][k]),
+            classification['ratings'])
+        )
 
 
 # Calls main method and passes first argument

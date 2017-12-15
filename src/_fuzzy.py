@@ -143,12 +143,12 @@ class Rulebase:
         result = Counter()
         for i, rule in enumerate(self.rules):
             consequent = rule.consequent[outputindex]
-            print(outputindex)
             if consequent != "":
                 fs = rule.calculate_firing_strength(datapoint, inputs)
                 if fs > result[consequent]:
                     result[consequent] = fs
-            print('RULE', i+1, consequent, result[consequent])
+            # print('RULE', i+1, consequent, result[consequent])
+            print(datapoint, rule.antecedent, result[consequent])
         return result
 
 class Reasoner:
