@@ -1,5 +1,5 @@
 
-from _utils import *
+from __data_preparation.utils import *
 
 class Splitter:
 	"""Splits given dataset into 50/50 train and validation sets."""

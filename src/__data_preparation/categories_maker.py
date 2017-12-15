@@ -3,7 +3,7 @@ import os
 import csv
 import math
 from collections import Counter
-from _utils import *
+from __data_preparation.utils import *
 
 def tf(word, row):
     return row.count(word) / len(row)

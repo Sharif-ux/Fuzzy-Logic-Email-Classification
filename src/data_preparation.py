@@ -29,7 +29,7 @@ while True:
 		params['threshold'] = t
 		break
 	except ValueError:
-        print("Man, learn to type a number.")
+		print("Man, learn to type a number.")
 
 # Splitting datadump into two 50% / 50% to prevent overfitting
 Splitter(params['delimiter'],
@@ -38,4 +38,3 @@ Splitter(params['delimiter'],
 # Create lists of cleaned and filtered words for each category
 # and a combined list for all distinct words of all categories
 Corpus(params).process()
-
