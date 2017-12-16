@@ -4,8 +4,8 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: 5,
-		'verbosity'	: False,
+		'limit'		: 100,
+		'verbose'	: False,
 		'defuz' 	: "centroid",
 
 		'delimiter' : ';',
@@ -102,10 +102,10 @@ def main():
 	# of the validation dataset
 	analyzer = Analyzer()
 
-	# analyzer.rate_all(rated, classifier, verbosity=True)
+	# analyzer.rate_all(rated, classifier, verbose=True)
 	analyzer.start(
 		rated, classifier,
-		limit=params['limit'], verbosity=params['verbosity']
+		limit=params['limit'], verbose=params['verbose']
 	)
 
 # Cleans plain text into arrays of words
@@ -163,25 +163,25 @@ class Rater:
 # Classifies one or bulks of emails
 class Analyzer:
 	def __init__(self):
-		self.format = "%20s | %20s | %1s"
-		self.trunc = lambda x: (x[:18] + '..') if len(x) > 18 else x
-		self.best = lambda c: max(c, key=lambda k: c[k])
-	def print(self, classification, verbosity):
-		print(
-			self.format %
-			(
-				self.trunc(classification['label'].lower()),
-				self.trunc(self.best(classification['class'])),
-				classification['ratings'] if (verbosity) else classification['feature_list']
-			)
-		)
-	def start(self, rated, classifier, limit=None, verbosity=False):
-		print(self.format % ("LABEL", "CLASS", "RATING"))
+		self.template = "{label:19.19} | {c:19.19} | {success:7.7} | {r}"
+		self.verbose = "{label:19.19} | {c:19.19} | {success:7.7} | {r_list}"
+	def print(self, classification, verbose):
+		if (verbose):
+			print(self.template.format(**classification))
+		else:
+			print(self.verbose.format(**classification))
+	def start(self, rated, classifier, limit=None, verbose=False):
+		score = 0
+		print("%19s | %19s | %7s | %1s"
+			% ("LABEL", "CLASS", "SUCCESS", "RATING"))
 		for i, email in enumerate(rated):
 			c = classifier.classify(email)
-			self.print(c, verbosity)
-			if i >= limit:
+			self.print(c, verbose)
+			if c['success'] == 'True':
+				score += 1
+			if i + 1 >= limit:
 				break
+		print("\nScore:", score, "/", limit)
 
 # Imports hidden at the bottom
 import os

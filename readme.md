@@ -37,6 +37,10 @@ Cloning the project:
     $ git clone git@github.com:Menziess/Fuzzy-Logic-Email-Classification.git
     $ cd Fuzzy-Logic-Email-Classification
 
+To prepare a given datadump:
+
+    $ python3 src/data_preparation.py
+
 To run the main program:
 
     $ python3 src/main.py
@@ -44,10 +48,3 @@ To run the main program:
 To run one of the sprints describing the steps taken:
 
     $ jupyter notebook
-
-Run additional scripts for data processing:
-
-    $ python3 src/__data_preparation.py
-    $ python3 src/__print_dump_lengths.py
-    $ python3 src/__word_list_maker.py
-    $ python3 src/__remove_duplicates_csv_features.py

@@ -24,17 +24,27 @@ class Classifier:
 				self.outputs,
 				i, 201, self.defuz)
 	def classify(self, email):
-		dept, body, rating = email
-		feature_list = list(rating.values())
+		# Get email information
+		# department, body and ratings
+		dept, body, r = email
+		# Unpack rating
+		r_list = list(r.values())
+		# Classify email
+		c_list = {
+			name : round(reasoner.inference(r_list), 3)
+			for name, reasoner in self.reasoners.items()
+		}
+		# Pick best
+		c = max(c_list, key=lambda k: c_list[k])
+		# Return results where T is succesfullness of classification
 		return {
+			"success" : str(dept.lower() == c.lower()),
 			"label" : dept,
 			"words" : body,
-			"ratings" : rating,
-			"feature_list" : feature_list,
-			"class" : {
-				name : round(reasoner.inference(feature_list), 3)
-				for name, reasoner in self.reasoners.items()
-			}
+			"r" : r,
+			"r_list" : r_list,
+			"c" : c,
+			"c_list" : c_list,
 		}
 
 class TriangularMF:
