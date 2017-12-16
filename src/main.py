@@ -4,16 +4,14 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: 20,
-		'verbose'	: True,
-		'defuz' 	: "centroid",
-		'trial'		: "max",
-		# 'trial'		: "rel",
-		# 'trial'		: "high",
+		'limit'		: 20, 			# None / 1231
+		'verbose'	: False, 		# True / False
+		'defuz' 	: "centroid",	# "centroid", "lom", "som"
+		'trial'		: "max",		# "max", "rel", "high"
 
 		'delimiter' : ';',
 
-		'print_results': True,
+		'print_results': False,
 		'results_path': "res/results.txt",
 
 		'datadump' 	: "res/klachtendumpgemeente.csv",
@@ -186,6 +184,8 @@ class Statistics:
 
 	def start(self, rated, classifier):
 		with open(self.params['results_path'], 'w', newline='') as f:
+			if not self.params['print_results']:
+				f = None
 			print("%19s | %19s | %7s | %1s"
 				% ("LABEL", "CLASS", "SUCCESS", "RATING"), file=f)
 			for i, email in enumerate(rated):
