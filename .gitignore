@@ -6,3 +6,14 @@
 *.log
 *.fdb_latexmk
 *.synctex.gz
+
+#Exclude all csv's
+*.csv
+#Except for these
+!**/res/klachtendumpgemeente.csv
+!**/res/starts_with_c.csv
+!**/res/starts_with_m.csv
+!**/res/traindump.csv
+!**/res/validationdump.csv
+!**/res/word_list.csv
+!**/res/features
