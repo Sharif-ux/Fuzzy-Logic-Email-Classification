@@ -39,7 +39,7 @@ class Classifier:
 		success = dept.lower() == c.lower()
 		guess_score = c_list[dept.lower()]
 		opposite_score = round(sum(c_list.values()) - guess_score, 3)
-		relative_score = round(guess_score / opposite_score, 3)
+		relative_score = round(guess_score / (opposite_score + 2e-26), 3)
 		# Return results where T is succesfullness of classification
 		return {
 			"success" : str(success),
