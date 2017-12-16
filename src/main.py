@@ -13,6 +13,9 @@ def main():
 
 		'delimiter' : ';',
 
+		'print_results': True,
+		'results_path': "res/results.txt",
+
 		'datadump' 	: "res/klachtendumpgemeente.csv",
 		'validdump' : "res/validationdump.csv",
 		'traindump' : "res/traindump.csv",
@@ -103,14 +106,8 @@ def main():
 
 	# Analyzes entire or parts of a classification
 	# of the validation dataset
-	statistics = Statistics(
-		params['trial']
-	)
-	statistics.start(
-		rated, classifier,
-		limit=params['limit'], verbose=params['verbose']
-	)
-	statistics.finish()
+	statistics = Statistics(params)
+	statistics.start(rated, classifier)
 
 # Cleans plain text into arrays of words
 def tokenize(body):
@@ -166,46 +163,52 @@ class Rater:
 
 # Classifies one or bulks of emails
 class Statistics:
-	def __init__(self, trial='max'):
-		self.trial = trial
+	def __init__(self, params):
+		self.params = params
 		self.iterations = 0
 		self.correct_guess = 0
 		self.template = "{label:19.19} | {c:19.19} | {success:7} | {r_list}"
 		self.verbose = "score: {guess_score}, opposite: {opposite_score}, relative: {relative_score}"
-	def print(self, classification, verbose):
-		if (verbose):
-			print(self.template.format(**classification))
-			print(self.verbose.format(**classification))
+	def print(self, classification, file):
+		if self.params['verbose']:
+			print(self.template.format(**classification), file=file)
+			print(self.verbose.format(**classification), file=file)
 		else:
-			print(self.template.format(**classification))
+			print(self.template.format(**classification), file=file)
 	def push(self, c):
 		self.iterations += 1
-		if self.trial == "max":
+		if self.params['trial'] == "max":
 			if c['correct_guess']: self.correct_guess += 1
-		elif self.trial == "relative":
+		elif self.params['trial'] == "relative":
 			if c['relative_score'] >= 0.33: self.correct_guess += 1
-		elif self.trial == "high":
+		elif self.params['trial'] == "high":
 			if c['guess_score'] >= 0.8: self.correct_guess += 1
 
-	def start(self, rated, classifier, limit=None, verbose=False):
-		print("%19s | %19s | %7s | %1s"
-			% ("LABEL", "CLASS", "SUCCESS", "RATING"))
-		for i, email in enumerate(rated):
-			c = classifier.classify(email)
-			self.push(c)
-			self.print(c, verbose)
-			if limit and i + 1 >= limit:
-				break
-	def finish(self):
-		print("\nCorrectly guessed:", self.correct_guess, "/", self.iterations,
-			"(" + str(round(self.correct_guess / self.iterations * 100, 1))
-			+ "%)\n")
-		if self.trial == "max":
-			print("Trial 'max': (correctly guessed if class equals label)")
-		elif self.trial == "relative":
-			print("Trial 'rel': (correctly guessed if relative score > 0.33)")
-		elif self.trial == "high":
-			print("Trial 'high': (correctly guessed if score > 0.75)")
+	def start(self, rated, classifier):
+		with open(self.params['results_path'], 'w', newline='') as f:
+			print("%19s | %19s | %7s | %1s"
+				% ("LABEL", "CLASS", "SUCCESS", "RATING"), file=f)
+			for i, email in enumerate(rated):
+				c = classifier.classify(email)
+				self.push(c)
+				self.print(c, file=f)
+				if self.params['limit'] and i + 1 >= self.params['limit']:
+					break
+			print("\nCorrectly guessed:", self.correct_guess, "/",
+				self.iterations,
+				"(" + str(round(self.correct_guess / self.iterations * 100, 1))
+				+ "%)\n", file=f)
+			if self.params['trial'] == "max":
+				print("Trial 'max': (correctly guessed if class equals label)",
+					file=f)
+			elif self.params['trial'] == "relative":
+				print("Trial 'rel': (correctly guessed if relative > 0.33)",
+					file=f)
+			elif self.params['trial'] == "high":
+				print("Trial 'high': (correctly guessed if score > 0.75)",
+					file=f)
+		if self.params['print_results']:
+			print("\nResults printed in file:", self.params['results_path'])
 
 # Imports hidden at the bottom
 import os
