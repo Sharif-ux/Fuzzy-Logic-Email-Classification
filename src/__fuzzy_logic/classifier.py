@@ -36,9 +36,17 @@ class Classifier:
 		}
 		# Pick best
 		c = max(c_list, key=lambda k: c_list[k])
+		success = dept.lower() == c.lower()
+		guess_score = c_list[dept.lower()]
+		opposite_score = round(sum(c_list.values()) - guess_score, 3)
+		relative_score = round(guess_score / opposite_score, 3)
 		# Return results where T is succesfullness of classification
 		return {
-			"success" : str(dept.lower() == c.lower()),
+			"success" : str(success),
+			"correct_guess" : success,
+			"guess_score" : guess_score,
+			"opposite_score": opposite_score,
+			"relative_score": relative_score,
 			"label" : dept,
 			"words" : body,
 			"r" : r,

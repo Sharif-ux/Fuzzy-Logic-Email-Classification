@@ -4,9 +4,12 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: 100,
-		'verbose'	: False,
+		'limit'		: 20,
+		'verbose'	: True,
 		'defuz' 	: "centroid",
+		'trial'		: "max",
+		# 'trial'		: "rel",
+		# 'trial'		: "high",
 
 		'delimiter' : ';',
 
@@ -100,13 +103,14 @@ def main():
 
 	# Analyzes entire or parts of a classification
 	# of the validation dataset
-	analyzer = Analyzer()
-
-	# analyzer.rate_all(rated, classifier, verbose=True)
-	analyzer.start(
+	statistics = Statistics(
+		params['trial']
+	)
+	statistics.start(
 		rated, classifier,
 		limit=params['limit'], verbose=params['verbose']
 	)
+	statistics.finish()
 
 # Cleans plain text into arrays of words
 def tokenize(body):
@@ -161,27 +165,47 @@ class Rater:
 		return ratings
 
 # Classifies one or bulks of emails
-class Analyzer:
-	def __init__(self):
-		self.template = "{label:19.19} | {c:19.19} | {success:7.7} | {r}"
-		self.verbose = "{label:19.19} | {c:19.19} | {success:7.7} | {r_list}"
+class Statistics:
+	def __init__(self, trial='max'):
+		self.trial = trial
+		self.iterations = 0
+		self.correct_guess = 0
+		self.template = "{label:19.19} | {c:19.19} | {success:7} | {r_list}"
+		self.verbose = "score: {guess_score}, opposite: {opposite_score}, relative: {relative_score}"
 	def print(self, classification, verbose):
 		if (verbose):
 			print(self.template.format(**classification))
-		else:
 			print(self.verbose.format(**classification))
+		else:
+			print(self.template.format(**classification))
+	def push(self, c):
+		self.iterations += 1
+		if self.trial == "max":
+			if c['correct_guess']: self.correct_guess += 1
+		elif self.trial == "relative":
+			if c['relative_score'] >= 0.33: self.correct_guess += 1
+		elif self.trial == "high":
+			if c['guess_score'] >= 0.8: self.correct_guess += 1
+
 	def start(self, rated, classifier, limit=None, verbose=False):
-		score = 0
 		print("%19s | %19s | %7s | %1s"
 			% ("LABEL", "CLASS", "SUCCESS", "RATING"))
 		for i, email in enumerate(rated):
 			c = classifier.classify(email)
+			self.push(c)
 			self.print(c, verbose)
-			if c['success'] == 'True':
-				score += 1
-			if i + 1 >= limit:
+			if limit and i + 1 >= limit:
 				break
-		print("\nScore:", score, "/", limit)
+	def finish(self):
+		print("\nCorrectly guessed:", self.correct_guess, "/", self.iterations,
+			"(" + str(round(self.correct_guess / self.iterations * 100, 1))
+			+ "%)\n")
+		if self.trial == "max":
+			print("Trial 'max': (correctly guessed if class equals label)")
+		elif self.trial == "relative":
+			print("Trial 'rel': (correctly guessed if relative score > 0.33)")
+		elif self.trial == "high":
+			print("Trial 'high': (correctly guessed if score > 0.75)")
 
 # Imports hidden at the bottom
 import os
