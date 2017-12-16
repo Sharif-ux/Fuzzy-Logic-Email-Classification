@@ -4,7 +4,8 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: 20,
+		'limit'		: 5,
+		'verbosity'	: False,
 		'defuz' 	: "centroid",
 
 		'delimiter' : ';',
@@ -92,14 +93,20 @@ def main():
 	]
 
 	# Fuzzy Logic Classifier
-	classifier = Classifier(inputs, outputs, rules, params['defuz'])
+	classifier = Classifier(
+		inputs, outputs,
+		rules, params['defuz']
+	)
 
 	# Analyzes entire or parts of a classification
-	#  of the validation dataset
-	analyzer = Analyzer(feature_lists)
+	# of the validation dataset
+	analyzer = Analyzer()
 
 	# analyzer.rate_all(rated, classifier, verbosity=True)
-	analyzer.rate_some(rated, classifier, limit=params['limit'], verbosity=True)
+	analyzer.start(
+		rated, classifier,
+		limit=params['limit'], verbosity=params['verbosity']
+	)
 
 # Cleans plain text into arrays of words
 def tokenize(body):
@@ -155,28 +162,26 @@ class Rater:
 
 # Classifies one or bulks of emails
 class Analyzer:
-	def __init__(self, feature_lists):
-		self.format = "%27s | %27s | %1s"
-		print(self.format % ("LABEL", "CLASS", [f[0] for f in feature_lists]))
-	def print(self, classification):
+	def __init__(self):
+		self.format = "%20s | %20s | %1s"
+		self.trunc = lambda x: (x[:18] + '..') if len(x) > 18 else x
+		self.best = lambda c: max(c, key=lambda k: c[k])
+	def print(self, classification, verbosity):
 		print(
 			self.format %
-			(classification['label'].lower(),
-			max(classification['class'],
-				key=lambda k: classification['class'][k]),
-			# classification['class'],
-			classification['ratings'])
+			(
+				self.trunc(classification['label'].lower()),
+				self.trunc(self.best(classification['class'])),
+				classification['ratings'] if (verbosity) else classification['feature_list']
+			)
 		)
-	def rate_all(self, rated, classifier, verbosity=False):
-		"""department, email, rating"""
-		for (d, e, r) in rated:
-			c = classifier.classify(d, e, list(r.values()))
-			self.print(c)
-	def rate_some(self, rated, classifier, limit, verbosity=False):
-		"""department, email, rating"""
-		for (d, e, r) in [next(rated) for _ in range(limit)]:
-			c = classifier.classify(d, e, list(r.values()))
-			self.print(c)
+	def start(self, rated, classifier, limit=None, verbosity=False):
+		print(self.format % ("LABEL", "CLASS", "RATING"))
+		for i, email in enumerate(rated):
+			c = classifier.classify(email)
+			self.print(c, verbosity)
+			if i >= limit:
+				break
 
 # Imports hidden at the bottom
 import os
