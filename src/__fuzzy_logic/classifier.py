@@ -7,11 +7,11 @@ from collections import defaultdict, Counter
 
 class Classifier:
 	"""Classifier that takes a feature vector as input, produces scalars as output."""
-	def __init__(self, inputs, outputs, rules, defuz):
+	def __init__(self, inputs, outputs, rules, params):
 		self.inputs = inputs
 		self.outputs = outputs
 		self.rulebase = Rulebase(rules)
-		self.defuz = defuz
+		self.params = params
 		self.reasoners = dict()
 		self.reason()
 	def reason(self):
@@ -22,7 +22,7 @@ class Classifier:
 				self.rulebase,
 				self.inputs,
 				self.outputs,
-				i, 201, self.defuz)
+				i, 201, self.params['defuz'])
 	def classify(self, email):
 		# Get email information
 		# department, body and ratings
@@ -36,10 +36,16 @@ class Classifier:
 		}
 		# Pick best
 		c = max(c_list, key=lambda k: c_list[k])
-		success = dept.lower() == c.lower()
 		guess_score = c_list[dept.lower()]
 		opposite_score = round(sum(c_list.values()) - guess_score, 3)
 		relative_score = round(guess_score / (opposite_score + 2e-26), 3)
+
+		success = dept.lower() == c.lower()
+		if self.params['trial'] == "relative":
+			success = relative_score >= 0.33
+		elif self.params['trial'] == "high":
+		 	success = guess_score >= 0.75
+
 		# Return results where T is succesfullness of classification
 		return {
 			"success" : str(success),

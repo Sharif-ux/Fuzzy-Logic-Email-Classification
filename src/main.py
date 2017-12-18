@@ -4,8 +4,8 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: None, 			# None / 1231
-		'verbose'	: False, 		# True / False
+		'limit'		: 20, 			# None / 1231
+		'verbose'	: True, 		# True / False
 		'defuz' 	: "centroid",	# "centroid", "lom", "som"
 		'trial'		: "max",		# "max", "rel", "high"
 
@@ -44,9 +44,9 @@ def main():
 	inputs = [
 
 		Input(feature[0], (0, 1), [
-			TrapezoidalMF("low", 0, 0, 0, 0.5),
+			TrapezoidalMF("low", -.2, -.1, 0, 0.5),
 			TriangularMF("med", 0, 0.5, 1),
-			TrapezoidalMF("high", 0.5, 1, 1, 1)
+			TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
 		]) for feature in feature_lists
 
 	]
@@ -55,9 +55,9 @@ def main():
 	outputs = [
 
 		Output(feature[0], (0, 1), [
-			TrapezoidalMF("low", 0, 0, 0, 0.5),
+			TrapezoidalMF("low", -.2, -.1, 0, 0.5),
 			TriangularMF("med", 0, 0.5, 1),
-			TrapezoidalMF("high", 0.5, 1, 1, 1)
+			TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
 		]) for feature in feature_lists
 
 	]
@@ -99,7 +99,7 @@ def main():
 	# Fuzzy Logic Classifier
 	classifier = Classifier(
 		inputs, outputs,
-		rules, params['defuz']
+		rules, params
 	)
 
 	# Analyzes entire or parts of a classification
@@ -164,24 +164,20 @@ class Statistics:
 	def __init__(self, params):
 		self.params = params
 		self.iterations = 0
-		self.correct_guess = 0
+		self.success = 0
 		self.template = "{label:19.19} | {c:19.19} | {success:7} | {r_list}"
 		self.verbose = "score: {guess_score}, opposite: {opposite_score}, relative: {relative_score}"
 	def print(self, classification, file):
 		if self.params['verbose']:
 			print(self.template.format(**classification), file=file)
 			print(self.verbose.format(**classification), file=file)
+			print(classification['r'], '\n')
 		else:
 			print(self.template.format(**classification), file=file)
 	def push(self, c):
 		self.iterations += 1
-		if self.params['trial'] == "max":
-			if c['correct_guess']: self.correct_guess += 1
-		elif self.params['trial'] == "relative":
-			if c['relative_score'] >= 0.33: self.correct_guess += 1
-		elif self.params['trial'] == "high":
-			if c['guess_score'] >= 0.8: self.correct_guess += 1
-
+		if c['correct_guess']:
+			self.success += 1
 	def start(self, rated, classifier):
 		with open(self.params['results_path'], 'w', newline='') as f:
 			if not self.params['print_results']:
@@ -194,18 +190,21 @@ class Statistics:
 				self.print(c, file=f)
 				if self.params['limit'] and i + 1 >= self.params['limit']:
 					break
-			print("\nCorrectly guessed:", self.correct_guess, "/",
+			print("\nTotal Success:", self.success, "/",
 				self.iterations,
-				"(" + str(round(self.correct_guess / self.iterations * 100, 1))
+				"(" + str(round(self.success / self.iterations * 100, 1))
 				+ "%)\n", file=f)
+
 			if self.params['trial'] == "max":
 				print("Trial 'max': (correctly guessed if class equals label)",
 					file=f)
-			elif self.params['trial'] == "relative":
-				print("Trial 'rel': (correctly guessed if relative > 0.33)",
+			elif self.params['trial'] == "rel":
+				print("Trial 'rel': (correctly guessed if relative > 0.33, "
+					+ "enable verbose for more output information)",
 					file=f)
 			elif self.params['trial'] == "high":
-				print("Trial 'high': (correctly guessed if score > 0.75)",
+				print("Trial 'high': (correctly guessed if score > 0.75, "
+					+ "enable verbose for more output information)",
 					file=f)
 		if self.params['print_results']:
 			print("\nResults printed in file:", self.params['results_path'])
