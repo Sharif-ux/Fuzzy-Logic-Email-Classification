@@ -37,4 +37,4 @@ Splitter(params)
 
 # Create lists of cleaned and filtered words for each category
 # and a combined list for all distinct words of all categories
-# Corpus(params).process()
+Corpus(params).process()

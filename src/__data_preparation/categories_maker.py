@@ -28,7 +28,7 @@ class Corpus:
 		self.filter_categories()
 	def read_dump(self):
 		if not self.rows:
-			with open(self.params['dumps'][-1], 'r') as c:
+			with open(self.params['traindump'], 'r') as c:
 				reader = csv.reader(c,
 					delimiter=self.params['delimiter'],
 					skipinitialspace=True)
