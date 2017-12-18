@@ -1,31 +1,32 @@
 
+import random
 from __data_preparation.utils import *
 
 class Splitter:
-	"""Splits given dataset into 50/50 train and validation sets."""
-	def __init__(self, delimiter, datadumppath, validationpath, trainpath):
-		self.delim = delimiter
-		self.datad = datadumppath
-		self.valid = validationpath
-		self.train = trainpath
-	def split(self):
-		dump_rows = read_csv(self.datad, self.delim)
-		with open(self.train, 'w', newline='') as t:
-			with open(self.valid, 'w', newline='') as v:
-				twriter = csv.writer(t, delimiter=self.delim)
-				vwriter = csv.writer(v, delimiter=self.delim)
-				tlen, vlen = 1, 1
-				for i, row in enumerate(dump_rows):
-					# Write head
-					if i == 0:
-						twriter.writerow(row)
-						vwriter.writerow(row)
-					elif i % 2 == 0:
-						tlen += 1
-						twriter.writerow(row)
-					else:
-						vlen += 1
-						vwriter.writerow(row)
+	"""Splits given dataset into train and validation sets."""
+	def __init__(self, params):
+		self.split(params)
+	def split(self, params):
+		data = read_csv(params['datadump'], params['delimiter'])
+		t = csv.writer(open(params['traindump'], 'w', newline=''),
+			delimiter=params['delimiter'])
+		v = csv.writer(open(params['validdump'], 'w', newline=''),
+			delimiter=params['delimiter'])
 
-		print("Written", tlen, "rows to", self.train, "and",
-			vlen, "rows to", self.valid)
+		random.shuffle(data)
+
+		f = params['train_data_factor']
+
+		train_data = data[1:int((len(data)+1) * f)]
+		valid_data = data[int(len(data)* f + 1):]
+
+		t.writerow(data[0])
+		v.writerow(data[0])
+
+		[t.writerow(row) for row in train_data]
+		[v.writerow(row) for row in valid_data]
+
+		print("Original dump length:", len(data))
+		print("Written", len(train_data), "rows to \"" + params['traindump']
+			+ "\" and", len(valid_data), "rows to \"" + params['validdump']
+			+ "\" used a factor of:", f)

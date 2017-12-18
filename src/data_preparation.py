@@ -7,11 +7,12 @@ from __data_preparation.categories_maker import *
 params = {
 	'threshold' : 0.1,
 	'delimiter' : ';',
-	'dumps' : [
-		"res/klachtendumpgemeente.csv",
-		"res/validationdump.csv",
-		"res/traindump.csv",
-	],
+	'train_data_factor' : .70,
+
+	'datadump' 	: "res/klachtendumpgemeente.csv",
+	'validdump' : "res/validationdump.csv",
+	'traindump' : "res/traindump.csv",
+
 	# Currently creating union word_list in categories folder
 	# instead of features folder
 	'word_list_path' : "res/categories/word_list/",
@@ -31,10 +32,9 @@ while True:
 	except ValueError:
 		print("Man, learn to type a number.")
 
-# Splitting datadump into two 50% / 50% to prevent overfitting
-Splitter(params['delimiter'],
-		*params['dumps']).split()
+# Splitting datadump into two lists to prevent overfitting
+Splitter(params)
 
 # Create lists of cleaned and filtered words for each category
 # and a combined list for all distinct words of all categories
-Corpus(params).process()
+# Corpus(params).process()
