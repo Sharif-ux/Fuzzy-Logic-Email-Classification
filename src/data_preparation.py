@@ -13,14 +13,13 @@ params = {
 	'delimiter' : ';',
 
 	'datadump' 	: "res/klachtendumpgemeente.csv",
-	'validdump' : "res/validationdump.csv",
+	'testdump'  : "res/testdump.csv",
 	'traindump' : "res/traindump.csv",
 
 	# Currently creating union word_list in categories folder
 	# instead of features folder
 	'word_list_path' : "res/categories/word_list/",
-	'categories_path' : "res/categories/",
-	'features_path' : "res/features/",
+	'categories_path': "res/categories/",
 }
 
 # Splitting datadump into two lists to prevent overfitting

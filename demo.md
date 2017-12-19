@@ -6,7 +6,7 @@
 
     > Our project contains two applications:
     > - one for preparing category lists used for rating emails
-    > - second for classifying email using fuzzy logic, using ratings as inputs
+    > - second for classifying email with fuzzy logic, using ratings as inputs
 
 1. Folders `/res` and `res/klachtendumpgemeente.csv` (30 s)
 

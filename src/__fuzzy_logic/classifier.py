@@ -27,11 +27,9 @@ class Classifier:
 		# Get email information
 		# department, body and ratings
 		dept, body, r = email
-		# Unpack rating
-		r_list = list(r.values())
 		# Classify email
 		c_list = {
-			name : round(reasoner.inference(r_list), 3)
+			name : round(reasoner.inference(r), 3)
 			for name, reasoner in self.reasoners.items()
 		}
 		# Pick best
@@ -55,10 +53,9 @@ class Classifier:
 			"relative_score": relative_score,
 			"label" : dept,
 			"words" : body,
-			"r" : r,
-			"r_list" : r_list,
-			"c" : c,
 			"c_list" : c_list,
+			"c" : c,
+			"r" : r,
 		}
 
 class TriangularMF:
@@ -142,7 +139,9 @@ class Rule:
 	def calculate_firing_strength(self, datapoint, inputs):
 		memberships = []
 
-		for a, x, i in zip(self.antecedent, datapoint, inputs):
+		for index, i in enumerate(inputs):
+			a = self.antecedent[index]
+			x = datapoint[i.name]
 			if (a == ''):
 				memberships.append(0)
 				continue
@@ -177,7 +176,6 @@ class Rulebase:
 				fs = rule.calculate_firing_strength(datapoint, inputs)
 				if fs > result[consequent]:
 					result[consequent] = fs
-			# print(datapoint, rule.antecedent, result[consequent])
 		return result
 
 class Reasoner:
@@ -199,7 +197,7 @@ class Reasoner:
 		agg_start = self.output[self.outputindex].range[0]
 		agg_end = self.output[self.outputindex].range[1]
 		aantal = self.discretize
-		breedte = (agg_end - agg_start)/(aantal-1)
+		breedte = (agg_end - agg_start) / (aantal-1)
 		input_value_pairs = []
 		for n in range(aantal):
 			x = agg_start + n * breedte
