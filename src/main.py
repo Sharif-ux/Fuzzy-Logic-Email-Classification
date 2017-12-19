@@ -4,7 +4,7 @@ def main():
 	# Paramters to easily tune stuff
 	params = {
 
-		'limit'		: 20, 			# None / 1231
+		'limit'		: None, 		# None / 1231
 		'verbose'	: True, 		# True / False
 		'defuz' 	: "centroid",	# "centroid", "lom", "som"
 		'trial'		: "max",		# "max", "rel", "high"

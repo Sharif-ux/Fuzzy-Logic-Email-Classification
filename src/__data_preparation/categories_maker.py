@@ -5,18 +5,21 @@ import math
 from collections import Counter
 from __data_preparation.utils import *
 
-# tf = frequency of a term in a given document
-# n_containing = number of documents containing word
-# idf = natural log of number of rows divided by number of rows containing word
-def tf(word, row):
-    return row.count(word) / len(row)
-def n_containing(word, rows):
-    return sum(1 for row in rows if word in row)
-def idf(word, rows):
-    return math.log(len(rows) / (1 + n_containing(word, rows)))
-def tfidf(word, row, rows):
-    return tf(word, row) * idf(word, rows)
-
+class Tfidf:
+	def __init__(self):
+		self.n_containing_dict = dict()
+	def tf(self, word, row):
+		return row.count(word) / len(row)
+	def n_containing(self, word, rows):
+		if (word in self.n_containing_dict):
+			return self.n_containing_dict[word]
+		n = sum(1 for row in rows if word in row)
+		self.n_containing_dict[word] = n
+		return n
+	def idf(self, word, rows):
+		return math.log(len(rows) / (1 + self.n_containing(word, rows)))
+	def tfidf(self, word, row, rows):
+		return self.tf(word, row) * self.idf(word, rows)
 
 class Corpus:
 	"""Designed to filter meaningfull words from a datadump and store
@@ -61,10 +64,11 @@ class Corpus:
 
 		# After folders are created, start tf/idf
 		print("Starting tf/idf process, this may take a while...")
+		tfidf = Tfidf()
 		for category in self.categories:
 			print("Category:", category, "- threshold:", params['threshold'])
 			rows = [row for row in self.rows if category == row[0]]
-			favorite_words = set(self.tfidf(rows, threshold=params['threshold'], verbose=params['verbose']))
+			favorite_words = set(self.tfidf(rows, tfidf, params))
 			print(category + ":", len(favorite_words))
 			word_list += favorite_words
 			common_word_list = intersection(common_word_list, favorite_words)
@@ -76,14 +80,15 @@ class Corpus:
 			set([x for x in word_list if x not in common_word_list]))
 
 	# Extracts words with tf/idf score above threshold
-	def tfidf(self, rows, threshold=0.2, verbose=False):
+	def tfidf(self, rows, tfidf, params):
 		favorite_words = []
 		for i, row in enumerate(rows):
-			scores = {word: tfidf(word, row[1], [r[1] for r in self.rows]) for word in row[1]}
-			best_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+			scores = {word: tfidf.tfidf(word, row[1], [r[1] for r in self.rows]) for word in row[1]}
+			best_words = sorted(scores.items(), key=lambda x: x[1],
+				reverse=True)
 			for word, score in best_words:
-				if (score >= threshold):
-					if (verbose):
+				if (score >= params['threshold']):
+					if (params['verbose']):
 						print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 					favorite_words.append(word)
 		return favorite_words

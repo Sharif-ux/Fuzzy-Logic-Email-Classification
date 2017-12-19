@@ -7,8 +7,8 @@ from __data_preparation.categories_maker import *
 # The 'threshold' determines wihch minimal tf/idf score is required
 # for words to end up in the category lists
 params = {
-	'threshold' : 0.1,
-	'verbose'	: False,
+	'threshold' : 0.2,
+	'verbose'	: True,
 	'delimiter' : ';',
 	'train_data_split_factor' : .70,
 
