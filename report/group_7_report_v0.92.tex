@@ -78,12 +78,18 @@ has used fuzzy logic to implement a anti-phishing tool using content- and non-co
 Douglass \cite{ranking} developed an email priority setting learning system for G-mail based on social, content, search label features. These features are use in a statistical model which is parametrized for each user (recipient) separately. This research does not present a solution for situations in larger organizations where there is no information about the individual recipient.
 
 \section{Approach}
-For our department determination we follow the procedures proposed by Ferolin for Information Retrieval. The following approach is followed. After data-pre-processing the email words are ranked, resulting in a feature score per email. Words are ranked using a pre-compiled list of words. Then fuzzy logic is applied to classify the email to the correct department.
+For our department determination we follow the procedures proposed by Ferolin for Information Retrieval. The following approach is followed. After data pre-processing the email words are ranked, resulting in a feature score per email. Words are ranked using a pre-compiled list of words. Then fuzzy logic is applied to classify the email to the correct department. \autoref{fig:flow} shows the process flow.
+
+\begin{figure}
+	\includegraphics[scale=0.6]{res/flow.png}
+	\caption{Process flow}
+	\label{fig:flow}
+\end{figure}
 
 \subsection{Data}
 
-A private dataset from ``Gemeente Amsterdam'' is used, containing 3371 emails with complaints from citizens.
-This dataset is a csv-file where each email has a correct department label, a description of the complaint, a description of contact with an employee and a proposed solution.
+A private data set from ``Gemeente Amsterdam'' is used, containing 3371 emails with complaints from citizens.
+This data set is a csv-file where each email has a correct department label, a description of the complaint, a description of contact with an employee and a proposed solution.
 An example:
 \begin{lstlisting}
 Parkeren;Vrijdag voor een ...;Ja, contact
@@ -96,18 +102,18 @@ In order to create a feature score for each email (refer to subsection \nameref{
 is the set of technical words, and $R$ is the set of relevant words from before. Feature list of technical words: $T = [t_1, t_2, \dots, t_n]$.
 Other feature lists contain other themed words: $U$, $V$, $W$, \dots .
 
-Feature word-lists are created using the term-frequency / inverse-document-frequency (tf-idf) method. \colorbox{yellow}{ hier nog referentie toevoegen, Jim ?} \colorbox{yellow}{Wil je een algemeen paper over tf-idf hebben of een link naar} \colorbox{yellow}{implementation hoe wij het toepassen?} From the corpus of training emails with the specific department label the following values are calculated for each term. 
+Feature word-lists are created using the term-frequency / inverse-document-frequency (tf-idf) method. From the corpus of training emails with the specific department label the following values are calculated for each term. 
 \begin{center}
-    $tdifd(t) = tf(t) * idf(t)$,
+    $tdifd(t, d, D) = tf(t, d) * idf(t, D)$,
 \end{center}
-where tf(t) equals the count of terms t, and idf(t) give a ranking of the importance of the word t in the whole corpus: 
+where $tf(t)$ equals the count of terms $t$ in email $d$, and $idf(t)$ gives a ranking of the importance of the word $t$ in the whole corpus $D$: 
 \begin{center}
     $idf(t, D) = log\dfrac{N(D)}{n_t(D)}$, 
 \end{center}
-where $N(D)$ is the total number of documents and $n_t(D)$ equals the number of documents containing the specific term. 
-Selecting those terms with a $tdifd > treshold$, the feature-word lists are created, with signal words for the specific department.
+where $N(D)$ is the total number of emails and $n_t(D)$ equals the number of emails containing the specific term. 
+Selecting those terms with a $tdifd > threshold$, the feature-word lists are created, with signal words for the specific department.
 
-\subsection{Data preprocessing}
+\subsection{Data pre-processing}
 The data needs to be cleaned and filtered.
 
 \begin{enumerate}
@@ -164,7 +170,7 @@ We have set a rule base for determining departments based on the content input v
 
 For training and validation the data set is divided in a training set and validation set with a factor 0.7.
 
-The training set of emails is used for the creation of the feature word-lists using tf/idf. The setting of the Fuzzy Logic rule base is done based on the expert vision of one of the team-members. 
+The training set of emails is used for the creation of the feature word-lists using tf/idf. The setting of the Fuzzy Logic rule base is done based on the expert vision of the team-members. 
 
 The validation set including the department label is used for validation. 
 
@@ -173,13 +179,13 @@ The validation set including the department label is used for validation.
 For cooperation purposes we used Github \footnote{\url{https://github.com/Menziess/Fuzzy-Logic-Email-Classification}} (for source control) and Trello \footnote{\url{https://trello.com/fuzzylogicemailclassification}} (as scrum projectmanagement tool)
 
 We used Python3 as programming language and Jupyter Notebook as development
-environment. The code is enlisted in \nameref{sec:python}. For data-preprocessing Pythons NLTK module \footnote{\url{http://www.nltk.org/}} is used. For classification a new algorithm has been developed. The fuzzy logic system itself is based on the Fuzzy Logic LAB \footnote{\url{https://blackboard.uva.nl/webapps/blackboard/execute/content/file?cmd=view&content_id=_6947429_1&course_id=_212301_1&framesetWrapped=true}}, amended for using more than one output, a centroid defuzzifier and some more flexibility and error handling in management of fuzzy logic rules.
+environment. The code is enlisted in \nameref{sec:python}. For data pre-processing Pythons NLTK module \footnote{\url{http://www.nltk.org/}} is used. For classification a new algorithm has been developed. The fuzzy logic system itself is based on the Fuzzy Logic LAB \footnote{\url{https://blackboard.uva.nl/webapps/blackboard/execute/content/file?cmd=view&content_id=_6947429_1&course_id=_212301_1&framesetWrapped=true}}, amended for using more than one output, a centroid defuzzifier and some more flexibility and error handling in management of fuzzy logic rules.
 
 \section{Experiment}
 
 \subsection{Results}
 
-The automatic process of feature word-list creation, data-preprocessing, ranking and classification with fuzzy logic has been implemented. The process is tested and works.
+The automatic process of feature word-list creation, data pre-processing, ranking and classification with fuzzy logic has been implemented. The process is tested and works.
 
 Validating the calculated departments with known labels has resulted in a 46.2 percent correctness.
 
@@ -188,8 +194,10 @@ Validating the calculated departments with known labels has resulted in a 46.2 p
 The project resulted in a baseline for the proposed approach. A feature vector is used which corresponds to the departments already, and we included a basic fuzzy logic implementation. Inclusion of a feature vector has an important advantage that also non-content features (like: ``press sensitive'') can be extracted which may result in determining a different department. The creation of a relevant feature vector based on a large email training set is work to do. 
 
 The fuzzy logic implementation has been basic. We included the feature scores of an e-mail as input, with basic triangular membership functions for low, medium and high. A basic rule set is included, with rules like IF input feature ``parkeren'' is high THEN output department ``parkeren'' is high. Work to do is to learn rules from a training data-set. For this the RIPPER algorithm, or others like Decision Tree or Neural Network may be considered. \cite{rulelearning}\cite{ripper}\\
- 
-The low classification success percentage is due to the used features and the rules. When looking at the ranking of the training set, no clear rules were found. Each feature has a high score for ``openbare ruimte'', so when ``openbare ruimte'' is high, it can still be any department. It would be better to find features where a high score for that feature would result in only one or two departments. 
+
+The low classification success percentage is due to the small data set of only 3371 emails, from which no good discriminating feature sets could be taken. The best classification rate was 46.2\% with a $threshold$ of 0.2, meaning we took all words with a tf-idf \textgreater  0.2. Even then each feature was not discriminating enough, meaning emails that did not have that feature still had a high score in that feature. This could be solved with using a larger data set, but we couldn't find a large labeled data set. 
+
+%The low classification success percentage is due to the used features and the rules. When looking at the ranking of the training set, no clear rules were found. Each feature has a high score for ``openbare ruimte'', so when ``openbare ruimte'' is high, it can still be any department. It would be better to find features where a high score for that feature would result in only one or two departments. 
 
 \section{Acknowledgment}
 
