@@ -5,7 +5,7 @@ def main():
 	params = {
 
 		'limit'		: None, 		# None / 1231
-		'verbose'	: True, 		# True / False
+		'verbose'	: False, 		# True / False
 		'defuz' 	: "centroid",	# "centroid", "lom", "som"
 		'trial'		: "max",		# "max", "rel", "high"
 
