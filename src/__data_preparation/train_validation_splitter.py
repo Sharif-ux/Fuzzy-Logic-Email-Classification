@@ -13,16 +13,20 @@ class Splitter:
 		v = csv.writer(open(params['validdump'], 'w', newline=''),
 			delimiter=params['delimiter'])
 
-		# Write header then shuffle
+		# Write header
 		v.writerow(data[0])
 		t.writerow(data[0])
-		random.shuffle(data[1:])
 
-		f = params['train_data_factor']
+		# Shuffle rest
+		data = data[1:]
+		random.shuffle(data)
 
-		train_data = data[1:int((len(data)+1) * f)]
+		# Split data based on factor
+		f = params['train_data_split_factor']
+		train_data = data[:int((len(data)+1) * f)]
 		valid_data = data[int(len(data)* f + 1):]
 
+		# Write data to csv files
 		[t.writerow(row) for row in train_data]
 		[v.writerow(row) for row in valid_data]
 

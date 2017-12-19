@@ -4,10 +4,13 @@ from __data_preparation.categories_maker import *
 
 # Dump requires three values: input dump path, validation dump path
 # and train dump paths, in that particular order
+# The 'threshold' determines wihch minimal tf/idf score is required
+# for words to end up in the category lists
 params = {
 	'threshold' : 0.1,
+	'verbose'	: False,
 	'delimiter' : ';',
-	'train_data_factor' : .70,
+	'train_data_split_factor' : .70,
 
 	'datadump' 	: "res/klachtendumpgemeente.csv",
 	'validdump' : "res/validationdump.csv",
@@ -20,11 +23,16 @@ params = {
 	'features_path' : "res/features/",
 }
 
-# Prompting user for safety
+# Splitting datadump into two lists to prevent overfitting
+Splitter(params)
+
+# Create lists of cleaned and filtered words for each category
+# and a combined list for all distinct words of all categories
+# Prompting user to prevent unwanted overwriting of categories
 while True:
-	print("You're about to write/overwrite category list csv's in '"
+	print("You're about to write/overwrite category list csv's in \""
 		+ params['categories_path']
-		+ "'.\nEnter a threshold above 0, if that's what you'd like to do: ")
+		+ "\".\nEnter a threshold above 0, if that's what you'd like to do: ")
 	try:
 		t = float(input("> "))
 		params['threshold'] = t
@@ -32,9 +40,4 @@ while True:
 	except ValueError:
 		print("Man, learn to type a number.")
 
-# Splitting datadump into two lists to prevent overfitting
-Splitter(params)
-
-# Create lists of cleaned and filtered words for each category
-# and a combined list for all distinct words of all categories
-Corpus(params).process()
+Corpus(params)
