@@ -11,29 +11,29 @@ def main():
 
 		'delimiter' : ';',
 
-		'print_results': False,
+		'print_results': True,
 		'results_path': "res/results.txt",
 
 		'datadump' 	: "res/klachtendumpgemeente.csv",
-		'validdump' : "res/validationdump.csv",
+		'testdump'  : "res/testdump.csv",
 		'traindump' : "res/traindump.csv",
-		'features' 	: "res/categories/*.csv",
+		'categories': "res/categories/*.csv",
 		'word_list' : "res/categories/word_list/word_list.csv",
 
 	}
 
-	# Read validation data
-	dump = read_csv(params['validdump'],
+	# Read test data
+	dump = read_csv(params['testdump'],
 					params['delimiter'])
 
 	# Create rate object that creates
 	# feature vectors for all emails
-	rater =   Rater(params['features'],
+	rater =   Rater(params['categories'],
 					params['word_list'])
 
-	# Lists with features used by the
+	# Lists with categories used by the
 	# rater object to rate the emails
-	feature_lists = rater.feature_lists
+	categories_list = rater.categories_list
 
 	# Rows and rated generators to iterate
 	# through rated and non-rated emails
@@ -47,7 +47,7 @@ def main():
 			TrapezoidalMF("low", -.2, -.1, 0, 0.5),
 			TriangularMF("med", 0, 0.5, 1),
 			TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-		]) for feature in feature_lists
+		]) for feature in categories_list
 
 	]
 
@@ -58,7 +58,7 @@ def main():
 			TrapezoidalMF("low", -.2, -.1, 0, 0.5),
 			TriangularMF("med", 0, 0.5, 1),
 			TrapezoidalMF("high", 0.5, 1, 1.1, 1.2)
-		]) for feature in feature_lists
+		]) for feature in categories_list
 
 	]
 
@@ -103,7 +103,7 @@ def main():
 	)
 
 	# Analyzes entire or parts of a classification
-	# of the validation dataset
+	# of the test dataset
 	statistics = Statistics(params)
 	statistics.start(rated, classifier)
 
@@ -134,29 +134,37 @@ class Rater:
 	def __init__(self, features, word_list):
 		self.path = features
 		self.word_list = read_csv(word_list)[0]
-		self.feature_lists = [
+		self.len_word_list = len(self.word_list)
+		self.categories_list = [
 			(os.path.basename(fname).split('.')[0],
 			read_csv(fname)[0])
 			for fname in glob.glob(self.path)]
-		self.feature_lists.sort(key=lambda tup: tup[0])
+		self.categories_list.sort(key=lambda tup: tup[0])
 	def corpus(self, email):
 		words = [w for w in email if w in self.word_list]
 		return np.c_[np.unique(words, return_counts=True)]
 	def rate_words(self, email):
 		c = self.corpus(email)
 		c_len = len(c)
-		for n, f in self.feature_lists:
+		for n, f in self.categories_list:
+			f_len = len(f)
 			c = np.c_[c, np.zeros(c_len)]
 			for row in c:
 				if (row[0] in f):
-					row[-1:] = int(row[1]) / c_len
+					# Alternative method purely looks at the document
+					# row[-1:] = int(row[1]) / c_len
+
+					# Main method takes category length vs word-list length
+					# into account
+					row[-1:] = int(row[1]) / c_len * (
+						1 - (f_len / self.len_word_list))
 		return c
 	def rate_email(self, email):
 		c = self.rate_words(email)
 		ratings = dict()
-		for i, feature in enumerate(self.feature_lists):
+		for i, category in enumerate(self.categories_list):
 			agg = min(c[:,i + 2].astype(np.float).sum(), 1.0)
-			ratings[feature[0]] = float(format(agg, '.2f'))
+			ratings[category[0]] = float(format(agg, '.2f'))
 		return ratings
 
 # Classifies one or bulks of emails
@@ -165,15 +173,16 @@ class Statistics:
 		self.params = params
 		self.iterations = 0
 		self.success = 0
-		self.template = "{label:19.19} | {c:19.19} | {success:7} | {r_list}"
+		self.template = "{label:19.19} | {c:19.19} | {success:7}"
 		self.verbose = "score: {guess_score}, opposite: {opposite_score}, relative: {relative_score}"
 	def print(self, classification, file):
 		if self.params['verbose']:
 			print(self.template.format(**classification), file=file)
+			print(classification['r'], '\n', file=file)
 			print(self.verbose.format(**classification), file=file)
-			print(classification['r'], '\n')
 		else:
 			print(self.template.format(**classification), file=file)
+			# print(classification['r'], file=file)
 	def push(self, c):
 		self.iterations += 1
 		if c['correct_guess']:

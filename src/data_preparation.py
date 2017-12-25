@@ -7,20 +7,19 @@ from __data_preparation.categories_maker import *
 # The 'threshold' determines wihch minimal tf/idf score is required
 # for words to end up in the category lists
 params = {
+	'train_data_split_factor' : .70,
 	'threshold' : 0.2,
 	'verbose'	: True,
 	'delimiter' : ';',
-	'train_data_split_factor' : .70,
 
 	'datadump' 	: "res/klachtendumpgemeente.csv",
-	'validdump' : "res/validationdump.csv",
+	'testdump'  : "res/testdump.csv",
 	'traindump' : "res/traindump.csv",
 
 	# Currently creating union word_list in categories folder
 	# instead of features folder
 	'word_list_path' : "res/categories/word_list/",
-	'categories_path' : "res/categories/",
-	'features_path' : "res/features/",
+	'categories_path': "res/categories/",
 }
 
 # Splitting datadump into two lists to prevent overfitting
