@@ -4,18 +4,17 @@
 
 ### 1. Plan
 
-As the name suggests, classifies emails using a Fuzzy Logic System.
-
+Seperti namanya, mengklasifikasikan email menggunakan Fuzzy Logic System.
 <a href="https://github.com/Menziess/Fuzzy-Logic-Email-Classification/blob/master/report/group_7_draftreport.pdf">
   <p align="center"><img width="625" src="https://i.imgur.com/HYQRXDK.jpg"></p>
 </a>
 
-1. Run ```python3 src/__data_preparation.py``` to plit the data dump to make sure that the extracted words do not resamble the overall data in a way that it overfits, extract meaningfull words using the training datadump after cleaning the documents, create a csv list for each category, and a combined 'word_list' to filter out irrelevant words from input emails.
-2. Run ```python3 src/main.py``` to run the main application, which classifies a part of the validation datadump.
+1. Run ```python3 src/__data_preparation.py``` untuk memasukkan data dump untuk memastikan bahwa kata-kata yang diekstrak tidak menyusun kembali keseluruhan data dengan cara yang berlebihan, ekstrak kata-kata yang bermakna menggunakan pelatihan datadump setelah membersihkan dokumen, membuat daftar csv untuk setiap kategori, dan gabungan 'word_list 'untuk menyaring kata-kata yang tidak relevan dari email masukan.
+2. Run ```python3 src/main.py``` untuk menjalankan aplikasi utama, yang mengklasifikasikan bagian dari datadump validasi.
 
 ### 2. Installation
 
-This step only on Windows 10:
+Step untuk windows 10
 
 - Install Windows subsystem for Linux
 - Install Ubuntu from the store
@@ -37,14 +36,14 @@ Cloning the project:
     $ git clone git@github.com:Menziess/Fuzzy-Logic-Email-Classification.git
     $ cd Fuzzy-Logic-Email-Classification
 
-To prepare a given datadump:
+Untuk mempersiapkan datadump tertentu:
 
     $ python3 src/data_preparation.py
 
-To run the main program:
+Untuk menjalankan program utama:
 
     $ python3 src/main.py
 
-To run one of the sprints describing the steps taken:
+Untuk menjalankan salah satu sprint yang menjelaskan langkah-langkah yang diambil:
 
     $ jupyter notebook
